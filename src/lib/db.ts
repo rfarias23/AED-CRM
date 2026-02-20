@@ -36,8 +36,8 @@ export class AppDB extends Dexie {
   intensityConfig!: EntityTable<IntensityConfig, 'id'>
   settings!: EntityTable<SettingsEntry, 'key'>
 
-  constructor() {
-    super('AECPipelineDB')
+  constructor(name: string = 'AECPipelineDB') {
+    super(name)
 
     this.version(1).stores({
       opportunities: 'id, stage, country, quarterId',
@@ -79,14 +79,55 @@ export class AppDB extends Dexie {
   }
 }
 
-export const db = new AppDB()
+// ── Per-User Database Instance ────────────────────
+// Mutable reference — reassigned by initUserDb() after auth resolves.
+// All 37 consumer files (stores, components, utilities) import this and
+// access it inside function bodies, so reassignment is transparent.
+
+// eslint-disable-next-line import/no-mutable-exports
+export let db = new AppDB()
+
+let currentUid: string | null = null
+
+/**
+ * Create (or reopen) a per-user database namespaced by Firebase UID.
+ * Called from ProtectedRoute after authentication resolves.
+ * Seeds reference/config data on first access.
+ */
+export async function initUserDb(uid: string): Promise<void> {
+  if (currentUid === uid) return // Already initialized for this user
+
+  // Close previous connection
+  db.close()
+
+  // Open the user-specific database
+  db = new AppDB(`AECPipelineDB-${uid}`)
+  currentUid = uid
+
+  // Seed reference data if this is a fresh database
+  await seedIfEmpty()
+}
+
+/**
+ * Close the current per-user database and reset to an inert placeholder.
+ * Called on logout or when auth session expires.
+ */
+export async function closeUserDb(): Promise<void> {
+  db.close()
+  db = new AppDB() // inert placeholder — won't be used until next login
+  currentUid = null
+
+  // Reset all Zustand stores to prevent stale data leaking between users
+  const { resetAllStores } = await import('./store-reset')
+  resetAllStores()
+}
 
 // ── Seed Loader ──────────────────────────────────
 
 /**
  * Seed reference/config data that ALL users need (country profiles,
  * exchange rates, fee structures, withholding profiles, intensity config).
- * Runs once per browser regardless of user role.
+ * Called automatically by initUserDb() for each user's database.
  */
 export async function seedIfEmpty(): Promise<void> {
   const profileCount = await db.countryProfiles.count()

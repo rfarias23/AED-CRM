@@ -15,6 +15,7 @@ import {
 } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { auth, firestore } from '@/lib/firebase'
+import { closeUserDb } from '@/lib/db'
 
 export type UserRole = 'admin' | 'advisor'
 
@@ -100,6 +101,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           })
         }
       } else {
+        // User signed out or session expired — close per-user DB
+        await closeUserDb()
         setUser(null)
       }
       setLoading(false)
@@ -112,6 +115,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
+    // Close per-user DB before signing out (also resets Zustand stores)
+    await closeUserDb()
     await signOut(auth)
   }
 
