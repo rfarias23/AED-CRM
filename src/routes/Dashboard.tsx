@@ -10,6 +10,7 @@ import { convertFromUSD, formatMoney } from '@/lib/currency-engine'
 import { getTemperature } from '@/components/pipeline/temperature'
 import KPICard from '@/components/shared/KPICard'
 import Card from '@/components/shared/Card'
+import Tooltip from '@/components/shared/Tooltip'
 import { StageBadge, TemperatureDot } from '@/components/shared/Badge'
 import { formatRelativeDate } from '@/lib/formatters'
 import {
@@ -149,9 +150,11 @@ export default function Dashboard() {
 
         {/* Temperature / Intensity Pulse */}
         <Card dark>
-          <h3 className="text-xs font-medium text-muted uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Thermometer className="w-4 h-4" /> Pulso de Intensidad
-          </h3>
+          <Tooltip text="Distribución de oportunidades activas según la frecuencia e intensidad de interacciones recientes." position="bottom">
+            <h3 className="text-xs font-medium text-muted uppercase tracking-wider mb-4 flex items-center gap-2">
+              <Thermometer className="w-4 h-4" /> Pulso de Intensidad
+            </h3>
+          </Tooltip>
           <div className="space-y-3">
             {(['hot', 'warm', 'cool', 'cold', 'dormant'] as const).map((temp) => (
               <div key={temp} className="flex items-center justify-between">

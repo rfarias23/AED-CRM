@@ -63,6 +63,14 @@ const TEMP_LABELS: Record<Temperature, string> = {
   dormant: 'Dormida',
 }
 
+const TEMP_TOOLTIPS: Record<Temperature, string> = {
+  hot: 'Interacción reciente y frecuente. La oportunidad está activa y avanzando.',
+  warm: 'Contacto moderado. Hay actividad pero podría intensificarse.',
+  cool: 'Baja actividad reciente. Requiere atención para no perder impulso.',
+  cold: 'Sin interacciones significativas. Alto riesgo de estancamiento.',
+  dormant: 'Sin actividad prolongada. Considerar reactivación o descarte.',
+}
+
 export function TemperatureDot({
   temperature,
   showLabel = false,
@@ -71,7 +79,7 @@ export function TemperatureDot({
   showLabel?: boolean
 }) {
   return (
-    <Tooltip text={TEMP_LABELS[temperature]}>
+    <Tooltip text={TEMP_TOOLTIPS[temperature]}>
       <span className="inline-flex items-center gap-1.5">
         <span
           className={`w-2.5 h-2.5 rounded-full ${TEMP_COLORS[temperature]}`}

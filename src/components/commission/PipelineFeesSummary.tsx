@@ -43,18 +43,21 @@ export default function PipelineFeesSummary({
         value={`$${(summary.totalGrossFees * 1_000_000).toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
         subtitle={`USD ${summary.totalGrossFees.toFixed(2)}M`}
         icon={<DollarSign className="w-5 h-5" />}
+        tooltip="Comisiones brutas totales calculadas sobre todas las oportunidades activas, antes de retenciones e impuestos."
       />
       <KPICard
         label="Fees Ponderado"
         value={`$${(summary.totalWeightedFees * 1_000_000).toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
         subtitle={`USD ${summary.totalWeightedFees.toFixed(2)}M — ${activeCount} oportunidades`}
         icon={<TrendingUp className="w-5 h-5" />}
+        tooltip="Fees bruto ajustado por la probabilidad de ganar cada oportunidad. Representa el ingreso esperado realista."
       />
       <KPICard
         label="Tasa Efectiva Prom."
         value={`${(avgRate * 100).toFixed(2)}%`}
         subtitle="Promedio ponderado del pipeline activo"
         icon={<Percent className="w-5 h-5" />}
+        tooltip="Porcentaje promedio de comisión sobre el valor ASCH del pipeline. Varía según la estructura de fees de cada oportunidad."
       />
     </div>
   )
