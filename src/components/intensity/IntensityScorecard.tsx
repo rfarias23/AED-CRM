@@ -84,20 +84,20 @@ export default function IntensityScorecard({ opportunityId }: Props) {
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="text-center">
           <IntensityGauge score={data.intensityScore} />
-          <span className="text-xs text-muted block mt-1">Score</span>
+          <span className="text-xs text-muted block mt-1" title="Puntuación compuesta (0-100) que mide la frecuencia, recencia y calidad de las interacciones comerciales con esta oportunidad.">Puntaje</span>
         </div>
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 h-12">
             <TemperatureDot temperature={data.temperature} showLabel />
           </div>
-          <span className="text-xs text-muted block mt-1">Temperatura</span>
+          <span className="text-xs text-muted block mt-1" title="Indicador de calor basado en los días desde el último contacto. Hot = reciente, Cold/Dormant = requiere atención urgente.">Temperatura</span>
         </div>
         <div className="text-center">
           <div className="flex items-center justify-center gap-1 h-12">
             <Clock className="w-4 h-4 text-muted" />
             <span className="font-mono text-lg">{data.daysSinceLastTouchpoint}d</span>
           </div>
-          <span className="text-xs text-muted block mt-1">Desde último contacto</span>
+          <span className="text-xs text-muted block mt-1" title="Días transcurridos desde la última interacción registrada. A mayor número, mayor riesgo de perder tracción con el cliente.">Desde último contacto</span>
         </div>
       </div>
 
@@ -105,11 +105,11 @@ export default function IntensityScorecard({ opportunityId }: Props) {
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="bg-cream rounded-lg p-3 text-center">
           <div className="font-mono text-xl">{data.totalTouchpoints}</div>
-          <div className="text-xs text-muted">Touchpoints</div>
+          <div className="text-xs text-muted" title="Número total de interacciones registradas vinculadas a esta oportunidad (emails, reuniones, llamadas, etc.).">Puntos de Contacto</div>
         </div>
         <div className="bg-cream rounded-lg p-3 text-center">
           <div className="font-mono text-xl">{(data.highQualityPct * 100).toFixed(0)}%</div>
-          <div className="text-xs text-muted">Alta Calidad</div>
+          <div className="text-xs text-muted" title="Proporción de interacciones calificadas como alta calidad. Interacciones de alta calidad tienen mayor impacto en el avance de la oportunidad.">Alta Calidad</div>
         </div>
       </div>
 
@@ -118,7 +118,7 @@ export default function IntensityScorecard({ opportunityId }: Props) {
         <div className="mb-4">
           <div className="flex items-center gap-1.5 mb-2">
             <BarChart3 className="w-3.5 h-3.5 text-muted" />
-            <span className="text-xs text-muted uppercase tracking-wider">Distribución</span>
+            <span className="text-xs text-muted uppercase tracking-wider" title="Desglose de interacciones por tipo para esta oportunidad. Permite evaluar la diversidad del esfuerzo comercial.">Distribución</span>
           </div>
           <div className="space-y-1.5">
             {data.typeDist.map(([type, count]) => {
@@ -140,7 +140,7 @@ export default function IntensityScorecard({ opportunityId }: Props) {
       {/* Recent timeline */}
       {data.timeline.length > 0 && (
         <div>
-          <span className="text-xs text-muted uppercase tracking-wider">Últimos Contactos</span>
+          <span className="text-xs text-muted uppercase tracking-wider" title="Las 5 interacciones más recientes registradas para esta oportunidad.">Últimos Contactos</span>
           <div className="space-y-1.5 mt-2">
             {data.timeline.map((ix, i) => (
               <div key={i} className="flex items-center gap-2 text-xs py-1 border-b border-border last:border-0">

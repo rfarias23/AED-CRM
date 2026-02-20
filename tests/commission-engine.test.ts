@@ -64,13 +64,6 @@ const CHILE_WITHHOLDING: WithholdingProfile = {
   notes: '',
 }
 
-// ── Helper ───────────────────────────────────────
-
-function roundTo(n: number, decimals: number): number {
-  const factor = Math.pow(10, decimals)
-  return Math.round(n * factor) / factor
-}
-
 // ── Tests: calculateCommission with DEFAULT structure ──
 
 describe('calculateCommission — ASCH Default (3%/2%/1.25%)', () => {
@@ -307,11 +300,9 @@ describe('resolveFeeStructure', () => {
     expect(result.id).toBe('fs-peru')
   })
 
-  it('throws when no fee structure found', () => {
+  it('returns undefined when no fee structure available', () => {
     const opp = makeOpp({})
-    expect(() => resolveFeeStructure(opp, [])).toThrow(
-      'No fee structure found',
-    )
+    expect(resolveFeeStructure(opp, [])).toBeUndefined()
   })
 })
 

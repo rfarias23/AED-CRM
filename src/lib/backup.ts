@@ -29,9 +29,17 @@ export async function exportDatabaseJSON(): Promise<string> {
  * Clears all existing data first.
  */
 export async function importDatabaseJSON(jsonString: string): Promise<void> {
-  const data = JSON.parse(jsonString)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let data: any
+  try {
+    data = JSON.parse(jsonString)
+  } catch {
+    throw new Error('El archivo no es JSON válido. Verifica que sea un backup exportado desde esta aplicación.')
+  }
 
-  if (!data.tables) throw new Error('Invalid backup format: missing tables')
+  if (!data.tables || typeof data.tables !== 'object') {
+    throw new Error('Formato de backup inválido: falta la sección "tables". Asegúrate de importar un archivo exportado desde esta aplicación.')
+  }
 
   await db.transaction(
     'rw',
@@ -55,7 +63,8 @@ export async function importDatabaseJSON(jsonString: string): Promise<void> {
       await db.reportSnapshots.clear()
       await db.settings.clear()
 
-      // Restore from backup
+      // Restore from backup (data is validated structurally but typed as any
+      // since it comes from untrusted JSON — Dexie will enforce schema on write)
       const t = data.tables
       if (t.countryProfiles?.length) await db.countryProfiles.bulkAdd(t.countryProfiles)
       if (t.exchangeRates?.length) await db.exchangeRates.bulkAdd(t.exchangeRates)

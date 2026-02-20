@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
@@ -33,12 +33,15 @@ export default function ExpenseForm() {
 
   const existing = useLiveQuery(() => (id ? db.expenses.get(id) : undefined), [id])
   const opportunities = useLiveQuery(() => db.opportunities.toArray(), [])
+  const allCountries = useLiveQuery(() => db.countryProfiles.toArray(), [])
+  const countries = useMemo(() => allCountries?.filter((c) => c.active), [allCountries])
 
   const [form, setForm] = useState<FormData>({
     date: new Date().toISOString().split('T')[0],
     type: 'travel',
     description: '',
     vendor: '',
+    country: 'CL',
     amountOriginal: 0,
     currency: 'USD',
     amountUSD: 0,
@@ -55,6 +58,7 @@ export default function ExpenseForm() {
         type: existing.type,
         description: existing.description,
         vendor: existing.vendor,
+        country: existing.country ?? 'CL',
         amountOriginal: existing.amountOriginal,
         currency: existing.currency,
         amountUSD: existing.amountUSD,
@@ -69,6 +73,14 @@ export default function ExpenseForm() {
   function setField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
+
+  // Auto-fill country from linked opportunity
+  useEffect(() => {
+    if (form.opportunityId && opportunities) {
+      const opp = opportunities.find((o) => o.id === form.opportunityId)
+      if (opp) setField('country', opp.country)
+    }
+  }, [form.opportunityId, opportunities])
 
   // Auto-convert to USD when amount or currency changes
   useEffect(() => {
@@ -133,6 +145,15 @@ export default function ExpenseForm() {
           <label className="block text-sm font-medium mb-1">Proveedor *</label>
           <input className={inputCls} value={form.vendor}
             onChange={(e) => setField('vendor', e.target.value)} required />
+        </div>
+
+        {/* Country */}
+        <div>
+          <label className="block text-sm font-medium mb-1">País *</label>
+          <select className={inputCls} value={form.country}
+            onChange={(e) => setField('country', e.target.value)}>
+            {countries?.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
+          </select>
         </div>
 
         {/* Amount + Currency */}

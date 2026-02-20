@@ -48,6 +48,10 @@ export const usePlanStore = create<PlanState>((set) => ({
   },
 
   close: async (id) => {
+    // Prevent duplicate close on already-closed plans
+    const existing = await db.quarterPlans.get(id)
+    if (!existing || existing.status === 'closed') return
+
     const now = new Date().toISOString()
     await db.quarterPlans.update(id, {
       status: 'closed',

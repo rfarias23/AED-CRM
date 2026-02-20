@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import type { Currency } from '@/lib/types'
 import { Menu, LogOut, Shield } from 'lucide-react'
 
-const DISPLAY_CURRENCIES: Currency[] = ['USD', 'CLP', 'PEN', 'COP', 'EUR']
+const DISPLAY_CURRENCIES: Currency[] = ['USD', 'CLP', 'PEN', 'COP', 'PYG', 'EUR']
 
 export default function Header() {
   const displayCurrency = useSettingsStore((s) => s.displayCurrency)

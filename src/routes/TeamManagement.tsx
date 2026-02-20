@@ -25,6 +25,7 @@ export default function TeamManagement() {
   const [users, setUsers] = useState<TeamUser[]>([])
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     loadUsers()
@@ -54,6 +55,7 @@ export default function TeamManagement() {
       setUsers(list)
     } catch (err) {
       console.error('Error loading users:', err)
+      setError('Error cargando usuarios. Verifica tu conexión e intenta de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -71,6 +73,7 @@ export default function TeamManagement() {
       )
     } catch (err) {
       console.error('Error updating role:', err)
+      setError('Error actualizando rol. Verifica tu conexión e intenta de nuevo.')
     } finally {
       setUpdating(null)
     }
@@ -122,6 +125,16 @@ export default function TeamManagement() {
           </div>
         </div>
       </Card>
+
+      {/* Error feedback */}
+      {error && (
+        <div className="bg-red/5 border border-red/20 rounded-lg px-4 py-3 flex items-center justify-between">
+          <p className="text-sm text-red">{error}</p>
+          <button onClick={() => setError(null)} className="text-red hover:text-red/70 text-sm font-medium ml-4">
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Users table */}
       <Card>

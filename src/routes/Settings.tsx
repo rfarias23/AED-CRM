@@ -11,8 +11,8 @@ import { exportOpportunitiesToExcel, exportExpensesToExcel, exportContactsToExce
 const TABS = [
   { key: 'countries', label: 'Países', icon: Globe },
   { key: 'fx', label: 'Tipo de Cambio', icon: DollarSign },
-  { key: 'fees', label: 'Fee Structures', icon: Percent },
-  { key: 'withholding', label: 'Withholding', icon: Percent },
+  { key: 'fees', label: 'Comisiones', icon: Percent },
+  { key: 'withholding', label: 'Retenciones', icon: Percent },
   { key: 'intensity', label: 'Intensidad', icon: Activity },
   { key: 'profile', label: 'Perfil', icon: User },
   { key: 'data', label: 'Datos', icon: Database },
@@ -161,14 +161,14 @@ function FeeStructuresTab() {
 
   return (
     <Card>
-      <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Estructuras de Fee</h3>
+      <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Estructuras de Comisión</h3>
       <div className="space-y-4">
         {structures.map((fs) => (
           <div key={fs.id} className="border border-border rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <h4 className="font-medium">{fs.name}</h4>
               <div className="flex gap-2 text-xs">
-                {fs.isDefault && <span className="px-2 py-0.5 bg-accent/10 text-accent rounded">Default</span>}
+                {fs.isDefault && <span className="px-2 py-0.5 bg-accent/10 text-accent rounded">Por Defecto</span>}
                 {fs.scope.country && <span className="px-2 py-0.5 bg-cream rounded">{fs.scope.country}</span>}
                 {fs.scope.sector && <span className="px-2 py-0.5 bg-cream rounded">{fs.scope.sector}</span>}
               </div>
@@ -261,10 +261,10 @@ function IntensityTab() {
         <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Umbrales de Temperatura (días)</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { key: 'hotDays', label: 'Hot ≤' },
-            { key: 'warmDays', label: 'Warm ≤' },
-            { key: 'coolDays', label: 'Cool ≤' },
-            { key: 'coldDays', label: 'Cold ≤' },
+            { key: 'hotDays', label: 'Caliente ≤' },
+            { key: 'warmDays', label: 'Tibia ≤' },
+            { key: 'coolDays', label: 'Fría ≤' },
+            { key: 'coldDays', label: 'Muy fría ≤' },
           ].map(({ key, label }) => (
             <div key={key}>
               <label className="block text-xs text-muted mb-1">{label}</label>
@@ -280,14 +280,14 @@ function IntensityTab() {
       </Card>
 
       <Card>
-        <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Benchmarks</h3>
+        <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Indicadores de Referencia</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[
             { key: 'interactionsPerWeek', label: 'Interacciones/Sem' },
             { key: 'meetingsPerWeek', label: 'Reuniones/Sem' },
             { key: 'newContactsPerWeek', label: 'Contactos Nuevos/Sem' },
-            { key: 'touchpointsPerActiveOpp', label: 'Touchpoints/Opp' },
-            { key: 'highQualityPctTarget', label: '% Alta Calidad Target' },
+            { key: 'touchpointsPerActiveOpp', label: 'Puntos Contacto/Opp' },
+            { key: 'highQualityPctTarget', label: '% Alta Calidad Objetivo' },
           ].map(({ key, label }) => (
             <div key={key}>
               <label className="block text-xs text-muted mb-1">{label}</label>
@@ -370,7 +370,7 @@ function ProfileTab() {
             onChange={(e) => setForm((f) => ({ ...f, profileEmail: e.target.value }))} />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Moneda Display</label>
+          <label className="block text-sm font-medium mb-1">Moneda Visualización</label>
           <select className={inputCls} value={form.displayCurrency}
             onChange={(e) => setForm((f) => ({ ...f, displayCurrency: e.target.value }))}>
             <option value="USD">USD</option>

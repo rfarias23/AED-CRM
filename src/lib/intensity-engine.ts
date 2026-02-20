@@ -133,7 +133,7 @@ export function calibrateConfig(
     benchmarks: {
       interactionsPerWeek: Math.round(historicalData.totalInteractions / weeks),
       meetingsPerWeek: Math.round(historicalData.totalMeetings / weeks),
-      newContactsPerWeek: Math.max(1, Math.round(historicalData.totalNewContacts / weeks)),
+      newContactsPerWeek: Math.round(historicalData.totalNewContacts / weeks),
       highQualityPctTarget: Math.max(0.2, Math.min(0.8, historicalData.highQualityPct)),
       touchpointsPerActiveOpp: currentConfig.benchmarks.touchpointsPerActiveOpp,
     },

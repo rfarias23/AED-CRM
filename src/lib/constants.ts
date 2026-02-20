@@ -20,7 +20,7 @@ export const DEFAULT_EXCHANGE_RATES: ExchangeRate[] = [
   { id: uuid(), fromCurrency: 'BRL', toCurrency: 'USD', rate: 0.175, updatedAt: '2026-02-01', source: 'manual' },
   { id: uuid(), fromCurrency: 'ARS', toCurrency: 'USD', rate: 0.00098, updatedAt: '2026-02-01', source: 'manual' },
   { id: uuid(), fromCurrency: 'UYU', toCurrency: 'USD', rate: 0.024, updatedAt: '2026-02-01', source: 'manual' },
-  { id: uuid(), fromCurrency: 'PYG', toCurrency: 'USD', rate: 0.000132, updatedAt: '2026-02-01', source: 'manual' },
+  { id: uuid(), fromCurrency: 'PYG', toCurrency: 'USD', rate: 0.000154, updatedAt: '2026-02-20', source: 'BCP' },
   { id: uuid(), fromCurrency: 'BOB', toCurrency: 'USD', rate: 0.145, updatedAt: '2026-02-01', source: 'manual' },
   { id: uuid(), fromCurrency: 'VES', toCurrency: 'USD', rate: 0.027, updatedAt: '2026-02-01', source: 'manual' },
   { id: uuid(), fromCurrency: 'GYD', toCurrency: 'USD', rate: 0.00478, updatedAt: '2026-02-01', source: 'manual' },

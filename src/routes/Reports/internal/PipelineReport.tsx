@@ -35,12 +35,11 @@ export default function PipelineReport() {
     // By fee structure
     const fsMap = new Map<string, { name: string; count: number; fees: number }>()
     for (const opp of active) {
-      try {
-        const fs = resolveFeeStructure(opp, feeStructures)
-        const prev = fsMap.get(fs.id) ?? { name: fs.name, count: 0, fees: 0 }
-        const match = pipeline.byOpportunity.find((i) => i.opportunity.id === opp.id)
-        fsMap.set(fs.id, { name: fs.name, count: prev.count + 1, fees: prev.fees + (match?.commission.grossFee ?? 0) })
-      } catch { /* no fee structure */ }
+      const fs = resolveFeeStructure(opp, feeStructures)
+      if (!fs) continue
+      const prev = fsMap.get(fs.id) ?? { name: fs.name, count: 0, fees: 0 }
+      const match = pipeline.byOpportunity.find((i) => i.opportunity.id === opp.id)
+      fsMap.set(fs.id, { name: fs.name, count: prev.count + 1, fees: prev.fees + (match?.commission.grossFee ?? 0) })
     }
 
     return {
@@ -58,15 +57,15 @@ export default function PipelineReport() {
       {/* Summary */}
       <div className="grid grid-cols-3 gap-4">
         <Card dark padding="sm">
-          <span className="text-xs text-white/60">Gross Fees</span>
+          <span className="text-xs text-white/60" title="Suma total de honorarios brutos estimados de todas las oportunidades activas. Representa el ingreso máximo potencial si se ganaran todas.">Comisiones Brutas</span>
           <div className="font-mono text-lg mt-1">USD {data.pipeline.totalGrossFees.toFixed(3)}M</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60">Weighted Fees</span>
+          <span className="text-xs text-white/60" title="Pipeline ponderado: valor total ajustado por la probabilidad de ganar cada oportunidad. Refleja el valor esperado realista.">Comisiones Ponderadas</span>
           <div className="font-mono text-lg mt-1">USD {data.pipeline.totalWeightedFees.toFixed(3)}M</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60">Oportunidades</span>
+          <span className="text-xs text-white/60" title="Cantidad de oportunidades activas en el pipeline (excluyendo ganadas, perdidas y dormidas).">Oportunidades</span>
           <div className="font-mono text-lg mt-1">{data.active.length}</div>
         </Card>
       </div>
@@ -76,8 +75,8 @@ export default function PipelineReport() {
         <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Por País</h3>
         <table className="w-full text-sm">
           <thead><tr className="text-left text-muted">
-            <th className="pb-2">País</th><th className="pb-2">Opp.</th>
-            <th className="pb-2 text-right">Valor</th><th className="pb-2 text-right">Fees</th>
+            <th className="pb-2" title="País donde se ubica la oportunidad.">País</th><th className="pb-2" title="Número de oportunidades activas en este país.">Opp.</th>
+            <th className="pb-2 text-right" title="Valor total ASCH en USD de las oportunidades en este país.">Valor</th><th className="pb-2 text-right" title="Comisiones brutas estimadas por las oportunidades de este país.">Fees</th>
           </tr></thead>
           <tbody>
             {data.byCountry.map(([code, v]) => (
@@ -98,9 +97,9 @@ export default function PipelineReport() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead><tr className="text-left text-muted">
-              <th className="pb-2">Proyecto</th><th className="pb-2">Etapa</th>
-              <th className="pb-2 text-right">ASCH USD</th><th className="pb-2 text-right">PoA</th>
-              <th className="pb-2 text-right">Fee Rate</th><th className="pb-2 text-right">Gross Fee</th>
+              <th className="pb-2" title="Nombre del proyecto u oportunidad comercial.">Proyecto</th><th className="pb-2" title="Fase actual de la oportunidad en el pipeline comercial.">Etapa</th>
+              <th className="pb-2 text-right" title="Valor del contrato ASCH en dólares estadounidenses.">ASCH USD</th><th className="pb-2 text-right" title="Probabilidad de Adjudicación: estimación porcentual de ganar esta oportunidad.">PoA</th>
+              <th className="pb-2 text-right" title="Tasa efectiva de comisión aplicada según la estructura de fees correspondiente.">Tasa Fee</th><th className="pb-2 text-right" title="Honorario bruto estimado antes de retenciones o impuestos.">Fee Bruto</th>
             </tr></thead>
             <tbody>
               {data.pipeline.byOpportunity.map((item) => (

@@ -22,10 +22,21 @@ const STAGE_LABELS: Record<OpportunityStage, string> = {
   dormant: 'Dormida',
 }
 
+const STAGE_TOOLTIPS: Record<OpportunityStage, string> = {
+  identification: 'Primera etapa: se identifica una oportunidad potencial en el mercado.',
+  qualification: 'Se evalúa si la oportunidad es viable y vale la pena perseguir (Go/No-Go).',
+  proposal: 'Se prepara y presenta la propuesta técnica y económica al cliente.',
+  negotiation: 'Negociación de términos, alcance y condiciones del contrato.',
+  won: 'Oportunidad adjudicada exitosamente.',
+  lost: 'Oportunidad no adjudicada.',
+  dormant: 'Oportunidad pausada o en espera de reactivación.',
+}
+
 export function StageBadge({ stage }: { stage: OpportunityStage }) {
   return (
     <span
       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STAGE_STYLES[stage]}`}
+      title={STAGE_TOOLTIPS[stage]}
     >
       {STAGE_LABELS[stage]}
     </span>

@@ -43,13 +43,17 @@ const columns = [
     cell: (info) => <StageBadge stage={info.getValue()} />,
   }),
   col.accessor('aschValueUSD', {
-    header: 'ASCH USD',
+    header: () => (
+      <span title="Valor del contrato según el modelo ASCH (Alcance, Sistema, Costo, Honorarios) convertido a dólares.">ASCH USD</span>
+    ),
     cell: (info) => (
       <MoneyDisplay amount={info.getValue()} currency="USD" compact />
     ),
   }),
   col.accessor('probabilityOfAward', {
-    header: 'PoA',
+    header: () => (
+      <span title="Probabilidad de Adjudicación: estimación porcentual de ganar la oportunidad basada en etapa, competencia y relación con el cliente.">PoA</span>
+    ),
     cell: (info) => (
       <span className="font-mono text-sm">{(info.getValue() * 100).toFixed(0)}%</span>
     ),

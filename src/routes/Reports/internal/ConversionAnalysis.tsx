@@ -56,22 +56,22 @@ export default function ConversionAnalysis() {
       {/* Win rate KPI */}
       <div className="grid grid-cols-3 gap-4">
         <Card dark padding="sm">
-          <span className="text-xs text-white/60">Win Rate</span>
+          <span className="text-xs text-white/60" title="Porcentaje de oportunidades ganadas sobre el total de oportunidades cerradas (ganadas + perdidas). Mide la efectividad comercial global.">Tasa de Éxito</span>
           <div className="font-mono text-2xl mt-1 text-green-net">{formatPercent(data.overallWinRate)}</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60">Perdidas</span>
+          <span className="text-xs text-white/60" title="Cantidad de oportunidades que no se adjudicaron. Sirve para analizar patrones de pérdida y mejorar la estrategia comercial.">Perdidas</span>
           <div className="font-mono text-2xl mt-1 text-red-soft">{data.lostCount}</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60">Dormidas</span>
+          <span className="text-xs text-white/60" title="Oportunidades sin actividad reciente que no fueron cerradas formalmente. Pueden reactivarse o requieren decisión de cierre.">Dormidas</span>
           <div className="font-mono text-2xl mt-1">{data.dormantCount}</div>
         </Card>
       </div>
 
       {/* Funnel */}
       <Card>
-        <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-4">Funnel de Conversión</h3>
+        <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-4" title="Visualización del flujo de oportunidades a través de cada etapa del pipeline. Muestra cuántas oportunidades avanzan entre etapas y dónde se producen las mayores caídas.">Funnel de Conversión</h3>
         <div className="space-y-3">
           {data.stageCounts.map((s, i) => {
             const maxCount = Math.max(...data.stageCounts.map((x) => x.count), 1)
@@ -101,9 +101,9 @@ export default function ConversionAnalysis() {
         <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Tasas de Conversión</h3>
         <table className="w-full text-sm">
           <thead><tr className="text-left text-muted">
-            <th className="pb-2">Desde</th><th className="pb-2">Hacia</th>
-            <th className="pb-2 text-right">Pasaron</th><th className="pb-2 text-right">Convirtieron</th>
-            <th className="pb-2 text-right">Tasa</th>
+            <th className="pb-2" title="Etapa de origen en el pipeline.">Desde</th><th className="pb-2" title="Etapa de destino a la que avanzaron las oportunidades.">Hacia</th>
+            <th className="pb-2 text-right" title="Total de oportunidades que alcanzaron o superaron la etapa de origen.">Pasaron</th><th className="pb-2 text-right" title="Oportunidades que avanzaron exitosamente a la siguiente etapa.">Convirtieron</th>
+            <th className="pb-2 text-right" title="Porcentaje de oportunidades que convirtieron de una etapa a la siguiente. Indica la eficiencia de avance en el pipeline.">Tasa</th>
           </tr></thead>
           <tbody>
             {data.conversions.map((c) => (

@@ -3,6 +3,7 @@ import type {
   Opportunity,
   Contact,
   Expense,
+  Trip,
   CountryProfile,
   ExchangeRate,
   FeeStructure,
@@ -25,6 +26,7 @@ export class AppDB extends Dexie {
   opportunities!: EntityTable<Opportunity, 'id'>
   contacts!: EntityTable<Contact, 'id'>
   expenses!: EntityTable<Expense, 'id'>
+  trips!: EntityTable<Trip, 'id'>
   countryProfiles!: EntityTable<CountryProfile, 'id'>
   exchangeRates!: EntityTable<ExchangeRate, 'id'>
   feeStructures!: EntityTable<FeeStructure, 'id'>
@@ -49,6 +51,30 @@ export class AppDB extends Dexie {
       reportSnapshots: 'id, quarterId, type',
       intensityConfig: 'id',
       settings: 'key',
+    })
+
+    // v2: Add country + tripId index on expenses, add trips table
+    this.version(2).stores({
+      expenses: 'id, date, opportunityId, quarterId, country, tripId',
+      trips: 'id, status, country, departureDate',
+    }).upgrade(async (tx) => {
+      // Backfill country on existing expenses from linked opportunity
+      const expenses = tx.table('expenses')
+      const opportunities = tx.table('opportunities')
+      await expenses.toCollection().modify(async (expense: Record<string, unknown>) => {
+        if (!expense.country) {
+          if (expense.opportunityId) {
+            const opp = await opportunities.get(expense.opportunityId as string)
+            expense.country = opp?.country ?? 'CL'
+          } else {
+            expense.country = 'CL' // default
+          }
+        }
+        // Initialize tripId if missing
+        if (expense.tripId === undefined) {
+          expense.tripId = undefined
+        }
+      })
     })
   }
 }

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
 import { calculateCommission } from '@/lib/commission-engine'
@@ -55,14 +55,16 @@ export default function FeeCalculatorFull() {
     return calculateCommission(amountUSD, selectedFs, selectedWh)
   }, [inputValue, inputCurrency, inputUnit, selectedFs, selectedWh, rateMap])
 
+  // Auto-select default fee structure when data loads
+  useEffect(() => {
+    if (!selectedFsId && feeStructures && feeStructures.length > 0) {
+      const def = feeStructures.find((fs) => fs.isDefault) ?? feeStructures[0]
+      setSelectedFsId(def.id)
+    }
+  }, [feeStructures, selectedFsId])
+
   if (!feeStructures || !withholdingProfiles || !exchangeRates) {
     return <p className="text-muted">Cargando datos...</p>
-  }
-
-  // Auto-select default fee structure on first render
-  if (!selectedFsId && feeStructures.length > 0) {
-    const def = feeStructures.find((fs) => fs.isDefault) ?? feeStructures[0]
-    setSelectedFsId(def.id)
   }
 
   return (
@@ -119,7 +121,7 @@ export default function FeeCalculatorFull() {
           <div className="space-y-3">
             <div>
               <label className="text-xs text-muted font-medium block mb-1">
-                Estructura de Fees
+                Estructura de Comisión
               </label>
               <select
                 value={selectedFsId ?? ''}
@@ -128,14 +130,14 @@ export default function FeeCalculatorFull() {
               >
                 {feeStructures.map((fs) => (
                   <option key={fs.id} value={fs.id}>
-                    {fs.name}{fs.isDefault ? ' (Default)' : ''}
+                    {fs.name}{fs.isDefault ? ' (Por Defecto)' : ''}
                   </option>
                 ))}
               </select>
               {selectedFs && (
                 <div className="mt-1 text-xs text-muted">
-                  Tiers: {selectedFs.tiers.map((t) => `${(t.rate * 100).toFixed(1)}%`).join(' / ')}
-                  {' — '}Scope: {selectedFs.scope.type}
+                  Niveles: {selectedFs.tiers.map((t) => `${(t.rate * 100).toFixed(1)}%`).join(' / ')}
+                  {' — '}Alcance: {selectedFs.scope.type}
                   {selectedFs.scope.country ? ` (${selectedFs.scope.country})` : ''}
                 </div>
               )}

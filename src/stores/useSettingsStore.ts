@@ -82,5 +82,7 @@ function persistSettings(state: SettingsState) {
     profileCompany: state.profileCompany,
     profileEmail: state.profileEmail,
   }
-  db.settings.put({ key: 'app', value: JSON.stringify(settings) })
+  db.settings.put({ key: 'app', value: JSON.stringify(settings) }).catch((err) =>
+    console.error('Failed to persist settings:', err),
+  )
 }

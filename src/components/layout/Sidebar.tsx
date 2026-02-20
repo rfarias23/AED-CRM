@@ -5,6 +5,7 @@ import {
   Target,
   Users,
   Receipt,
+  Plane,
   ClipboardList,
   BarChart3,
   Settings,
@@ -18,11 +19,12 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 import { useAuth } from '@/contexts/AuthContext'
 
 const NAV_ITEMS = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/', icon: LayoutDashboard, label: 'Panel' },
   { to: '/calculator', icon: Calculator, label: 'Calculadora' },
   { to: '/opportunities', icon: Target, label: 'Oportunidades' },
   { to: '/contacts', icon: Users, label: 'Contactos' },
   { to: '/expenses', icon: Receipt, label: 'Gastos' },
+  { to: '/trips', icon: Plane, label: 'Viajes' },
   { to: '/plan', icon: ClipboardList, label: 'Plan Comercial' },
   { to: '/reports', icon: BarChart3, label: 'Reportes' },
   { to: '/settings', icon: Settings, label: 'Configuración' },
@@ -68,7 +70,7 @@ export default function Sidebar() {
         {/* Logo */}
         <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10">
           {(!collapsed || mobileOpen) && (
-            <span className="font-heading text-lg tracking-tight">AEC Pipeline</span>
+            <span className="font-heading text-lg tracking-tight">FyF Public Relations</span>
           )}
           {/* Desktop toggle */}
           <button

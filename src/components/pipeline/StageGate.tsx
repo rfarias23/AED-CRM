@@ -44,7 +44,7 @@ export default function StageGate({
     <Modal
       open
       onClose={onClose}
-      title={requiresGate ? 'Go / No-Go Gate' : 'Cambio de Etapa'}
+      title={requiresGate ? 'Decisión Go / No-Go' : 'Cambio de Etapa'}
       size="md"
     >
       <div className="space-y-4">

@@ -53,19 +53,19 @@ export default function WithholdingPanel({
           <p className="text-xs text-muted">{active.scenario.description}</p>
           <div className="grid grid-cols-3 gap-4 pt-2">
             <div>
-              <span className="text-xs text-muted block">Fee Bruto</span>
+              <span className="text-xs text-muted block" title="Honorario bruto total calculado según los tramos de la estructura de fees, antes de retenciones.">Fee Bruto</span>
               <span className="font-mono font-semibold text-sm">
                 USD {active.grossFee.toFixed(4)}M
               </span>
             </div>
             <div>
-              <span className="text-xs text-muted block">Retención</span>
+              <span className="text-xs text-muted block" title="Monto retenido por la jurisdicción según el escenario de retención seleccionado.">Retención</span>
               <span className="font-mono font-semibold text-sm text-red">
                 −USD {active.withholdingAmount.toFixed(4)}M
               </span>
             </div>
             <div>
-              <span className="text-xs text-muted block">Fee Neto</span>
+              <span className="text-xs text-muted block" title="Honorario neto después de aplicar el escenario de retención seleccionado.">Fee Neto</span>
               <span className="font-mono font-semibold text-sm text-green-net">
                 USD {active.netFee.toFixed(4)}M
               </span>

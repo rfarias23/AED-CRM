@@ -21,7 +21,10 @@ export const useIntensityStore = create<IntensityState>((set, get) => ({
     set({ loading: true })
     const configs = await db.intensityConfig.toArray()
     const config = configs[0] ?? null
-    set({ config, loading: false })
+    // Restore persisted snapshots
+    const entry = await db.settings.get('intensity-snapshots')
+    const snapshots: IntensitySnapshot[] = entry ? JSON.parse(entry.value) : []
+    set({ config, snapshots, loading: false })
   },
 
   updateConfig: async (data) => {
@@ -33,8 +36,11 @@ export const useIntensityStore = create<IntensityState>((set, get) => ({
   },
 
   saveSnapshot: async (snapshot) => {
-    // Snapshots go to reportSnapshots or a dedicated table
-    // For now, store as JSON in settings
-    set((s) => ({ snapshots: [...s.snapshots, snapshot] }))
+    const updated = [...get().snapshots, snapshot]
+    await db.settings.put({
+      key: 'intensity-snapshots',
+      value: JSON.stringify(updated),
+    })
+    set({ snapshots: updated })
   },
 }))

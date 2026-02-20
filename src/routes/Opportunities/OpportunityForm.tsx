@@ -24,15 +24,15 @@ const SECTORS: { value: ProjectSector; label: string }[] = [
   { value: 'energy', label: 'Energía' },
   { value: 'infrastructure', label: 'Infraestructura' },
   { value: 'water', label: 'Agua' },
-  { value: 'oil_gas', label: 'Oil & Gas' },
-  { value: 'real_estate', label: 'Real Estate' },
+  { value: 'oil_gas', label: 'Petróleo y Gas' },
+  { value: 'real_estate', label: 'Inmobiliario' },
   { value: 'industrial', label: 'Industrial' },
   { value: 'technology', label: 'Tecnología' },
   { value: 'other', label: 'Otro' },
 ]
 
 const CLIENT_TYPES: { value: ClientType; label: string }[] = [
-  { value: 'owner', label: 'Owner / Mandante' },
+  { value: 'owner', label: 'Mandante' },
   { value: 'developer', label: 'Desarrollador' },
   { value: 'epc', label: 'EPC / Contratista' },
   { value: 'government', label: 'Gobierno' },
@@ -41,8 +41,8 @@ const CLIENT_TYPES: { value: ClientType; label: string }[] = [
 ]
 
 const CONTRACT_TYPES: { value: ContractType; label: string }[] = [
-  { value: 'fee_success', label: 'Success Fee' },
-  { value: 'retainer', label: 'Retainer' },
+  { value: 'fee_success', label: 'Comisión de Éxito' },
+  { value: 'retainer', label: 'Anticipo Mensual' },
   { value: 'mixed', label: 'Mixto' },
   { value: 'project_based', label: 'Por Proyecto' },
 ]
@@ -54,7 +54,8 @@ export default function OpportunityForm() {
   const updateOpp = useOpportunityStore((s) => s.update)
   const rateMap = useCurrencyStore((s) => s.rateMap)
 
-  const countries = useLiveQuery(() => db.countryProfiles.where('active').equals(1).toArray(), [])
+  const allCountries = useLiveQuery(() => db.countryProfiles.toArray(), [])
+  const countries = useMemo(() => allCountries?.filter((c) => c.active), [allCountries])
   const feeStructures = useLiveQuery(() => db.feeStructures.toArray(), [])
   const withholdingProfiles = useLiveQuery(() => db.withholdingProfiles.toArray(), [])
   const existing = useLiveQuery(() => (id ? db.opportunities.get(id) : undefined), [id])
@@ -79,7 +80,7 @@ export default function OpportunityForm() {
   const [expectedStartDate, setExpectedStartDate] = useState('')
   const [deadlineRFP, setDeadlineRFP] = useState('')
   const [teamingPartners, setTeamingPartners] = useState('')
-  const [tags, setTags] = useState('')
+  const [tags, setEtiquetas] = useState('')
   const [notes, setNotes] = useState('')
 
   // Populate from existing
@@ -100,7 +101,7 @@ export default function OpportunityForm() {
     setExpectedStartDate(existing.expectedStartDate ?? '')
     setDeadlineRFP(existing.deadlineRFP ?? '')
     setTeamingPartners(existing.teamingPartners.join(', '))
-    setTags(existing.tags.join(', '))
+    setEtiquetas(existing.tags.join(', '))
     setNotes(existing.notes)
   }, [existing])
 
@@ -126,11 +127,7 @@ export default function OpportunityForm() {
   const resolvedFs: FeeStructure | undefined = useMemo(() => {
     if (!feeStructures || feeStructures.length === 0) return undefined
     const mockOpp = { country, sector, feeStructureId: undefined } as Opportunity
-    try {
-      return resolveFeeStructure(mockOpp, feeStructures)
-    } catch {
-      return feeStructures[0]
-    }
+    return resolveFeeStructure(mockOpp, feeStructures)
   }, [country, sector, feeStructures])
 
   const resolvedWh: WithholdingProfile | undefined = useMemo(() => {
@@ -183,7 +180,7 @@ export default function OpportunityForm() {
 
       {/* Step indicator */}
       <div className="flex gap-1 mb-6">
-        {['Identificación', 'Dimensionamiento', 'Timing & Estrategia'].map((label, i) => (
+        {['Identificación', 'Dimensionamiento', 'Plazos y Estrategia'].map((label, i) => (
           <button
             key={label}
             onClick={() => setStep(i + 1)}
@@ -312,7 +309,7 @@ export default function OpportunityForm() {
           {/* Auto-resolved fee structure info */}
           {resolvedFs && (
             <div className="bg-cream/50 rounded-lg px-3 py-2 text-xs text-muted">
-              Fee Structure auto-resuelto: <span className="font-medium text-ink">{resolvedFs.name}</span>
+              Estructura de comisión auto-resuelta: <span className="font-medium text-ink">{resolvedFs.name}</span>
               {' '}({resolvedFs.tiers.map((t) => `${(t.rate * 100).toFixed(1)}%`).join('/')})
             </div>
           )}
@@ -354,7 +351,7 @@ export default function OpportunityForm() {
                 className="w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20" />
             </div>
             <div>
-              <label className="text-xs text-muted font-medium block mb-1">Deadline RFP</label>
+              <label className="text-xs text-muted font-medium block mb-1">Plazo RFP</label>
               <input type="date" value={deadlineRFP} onChange={(e) => setDeadlineRFP(e.target.value)}
                 className="w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20" />
             </div>
@@ -376,8 +373,8 @@ export default function OpportunityForm() {
               className="w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20" />
           </div>
           <div>
-            <label className="text-xs text-muted font-medium block mb-1">Tags</label>
-            <input value={tags} onChange={(e) => setTags(e.target.value)}
+            <label className="text-xs text-muted font-medium block mb-1">Etiquetas</label>
+            <input value={tags} onChange={(e) => setEtiquetas(e.target.value)}
               placeholder="Separados por coma"
               className="w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20" />
           </div>

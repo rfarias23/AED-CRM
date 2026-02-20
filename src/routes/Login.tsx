@@ -82,8 +82,8 @@ export default function Login() {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-accent rounded-2xl mb-4">
             <Building2 className="w-7 h-7 text-white" />
           </div>
-          <h1 className="font-heading text-2xl text-ink">AEC Pipeline</h1>
-          <p className="text-muted text-sm mt-1">Command Center</p>
+          <h1 className="font-heading text-2xl text-ink">FyF Public Relations</h1>
+          <p className="text-muted text-sm mt-1">Management Center</p>
         </div>
 
         {/* Card */}
@@ -119,7 +119,7 @@ export default function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     autoComplete="current-password"
-                    placeholder="••••••••"
+                    placeholder="Ingrese su contraseña"
                     className="w-full border border-border rounded-lg px-3 py-2.5 pr-10 text-sm bg-white
                       focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent
                       placeholder:text-muted/50"
@@ -247,7 +247,7 @@ export default function Login() {
 
         {/* Footer */}
         <p className="text-center text-xs text-muted/60 mt-6">
-          Command Center v1.0
+          Management Center v1.0
         </p>
       </div>
     </div>

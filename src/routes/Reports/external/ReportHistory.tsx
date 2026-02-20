@@ -42,7 +42,7 @@ export default function ReportHistory() {
                 </div>
                 <div className="text-right text-sm font-mono">
                   <div>Pipeline: ${snap.achieved.pipelineUSD.toFixed(1)}M</div>
-                  <div className="text-muted">Won: ${snap.achieved.wonUSD.toFixed(1)}M</div>
+                  <div className="text-muted">Ganado: ${snap.achieved.wonUSD.toFixed(1)}M</div>
                 </div>
               </div>
             </Card>

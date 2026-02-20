@@ -8,6 +8,7 @@ import { StatusBadge } from '@/components/shared/Badge'
 import EmptyState from '@/components/shared/EmptyState'
 import { formatDate } from '@/lib/formatters'
 import type { Expense, ExpenseType } from '@/lib/types'
+import CountryFlag from '@/components/shared/CountryFlag'
 import { Plus, Receipt } from 'lucide-react'
 
 const TYPE_LABELS: Record<ExpenseType, string> = {
@@ -46,14 +47,23 @@ const columns = [
     header: 'Proveedor',
     cell: (info) => <span className="text-sm">{info.getValue()}</span>,
   }),
+  col.accessor('country', {
+    header: 'País',
+    cell: (info) => (
+      <span className="flex items-center gap-1.5">
+        <CountryFlag code={info.getValue()} size="sm" />
+        <span className="text-sm">{info.getValue()}</span>
+      </span>
+    ),
+  }),
   col.accessor('amountOriginal', {
-    header: 'Monto',
+    header: () => <span title="Valor original del gasto en la moneda local de la transacción.">Monto</span>,
     cell: (info) => (
       <MoneyDisplay amount={info.getValue()} currency={info.row.original.currency} compact />
     ),
   }),
   col.accessor('amountUSD', {
-    header: 'USD',
+    header: () => <span title="Equivalente en dólares estadounidenses, convertido al tipo de cambio del momento.">USD</span>,
     cell: (info) => <MoneyDisplay amount={info.getValue()} currency="USD" compact />,
   }),
 ]

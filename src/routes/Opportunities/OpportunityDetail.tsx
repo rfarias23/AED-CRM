@@ -79,9 +79,7 @@ export default function OpportunityDetail() {
 
   if (!opp) return <p className="text-muted">Cargando...</p>
 
-  const resolvedFs = feeStructures ? (() => {
-    try { return resolveFeeStructure(opp, feeStructures) } catch { return undefined }
-  })() : undefined
+  const resolvedFs = feeStructures ? resolveFeeStructure(opp, feeStructures) : undefined
 
   const resolvedWh = withholdingProfiles?.find((wp) => wp.jurisdictionCountry === opp.country)
   const dealMillions = opp.aschValueUSD / 1_000_000
@@ -130,21 +128,21 @@ export default function OpportunityDetail() {
 
       {/* Stage + KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card dark padding="sm">
+        <Card dark padding="sm" title="Fase actual en el pipeline de ventas. Cada etapa refleja el nivel de madurez y probabilidad de cierre.">
           <span className="text-xs text-white/60">Etapa</span>
           <div className="mt-1"><StageBadge stage={opp.stage} /></div>
         </Card>
-        <Card dark padding="sm">
+        <Card dark padding="sm" title="Valor total del contrato según el modelo ASCH (Alcance, Sistema, Costo, Honorarios). Representa el monto bruto de la oportunidad.">
           <span className="text-xs text-white/60">Valor ASCH</span>
           <div className="mt-1 font-mono text-lg">
             <MoneyDisplay amount={opp.aschValueUSD} currency="USD" compact />
           </div>
         </Card>
-        <Card dark padding="sm">
+        <Card dark padding="sm" title="Estimación del porcentaje de probabilidad de ganar esta oportunidad. Se basa en la etapa, competencia y relación con el cliente.">
           <span className="text-xs text-white/60">PoA</span>
           <div className="mt-1 font-mono text-lg">{formatPercent(opp.probabilityOfAward)}</div>
         </Card>
-        <Card dark padding="sm">
+        <Card dark padding="sm" title="Honorario bruto estimado según la estructura de fees aplicable. Es el ingreso potencial antes de retenciones e impuestos.">
           <span className="text-xs text-white/60">Fee Bruto</span>
           <div className="mt-1 font-mono text-lg text-gold-soft">
             {commission ? `USD ${commission.grossFee.toFixed(3)}M` : '—'}
@@ -189,7 +187,7 @@ export default function OpportunityDetail() {
                 <dd>{opp.expectedCloseDate ? formatDate(opp.expectedCloseDate) : '—'}</dd></div>
               <div className="flex justify-between"><dt className="text-muted">Inicio Est.</dt>
                 <dd>{opp.expectedStartDate ? formatDate(opp.expectedStartDate) : '—'}</dd></div>
-              <div className="flex justify-between"><dt className="text-muted">Deadline RFP</dt>
+              <div className="flex justify-between"><dt className="text-muted">Plazo RFP</dt>
                 <dd>{opp.deadlineRFP ? formatDate(opp.deadlineRFP) : '—'}</dd></div>
             </dl>
             {opp.teamingPartners.length > 0 && (

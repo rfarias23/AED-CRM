@@ -93,40 +93,40 @@ export default function QuarterReport() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-muted">
-                  <th className="pb-2">Métrica</th>
-                  <th className="pb-2 text-right">Planificado</th>
-                  <th className="pb-2 text-right">Actual</th>
-                  <th className="pb-2 text-right">Cumplimiento</th>
+                  <th className="pb-2" title="Indicador clave de rendimiento evaluado.">Métrica</th>
+                  <th className="pb-2 text-right" title="Valor objetivo definido en el plan trimestral.">Planificado</th>
+                  <th className="pb-2 text-right" title="Valor real alcanzado al momento del reporte.">Actual</th>
+                  <th className="pb-2 text-right" title="Porcentaje de avance del valor actual respecto al planificado.">Cumplimiento</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-t border-border">
-                  <td className="py-2">Pipeline (USD M)</td>
-                  <td className="py-2 text-right font-mono">{activePlan.targetPipelineUSD}</td>
+                  <td className="py-2" title="Valor total bruto de todas las oportunidades activas en el pipeline, expresado en millones de USD.">Pipeline (USD M)</td>
+                  <td className="py-2 text-right font-mono">{activePlan.targetPipelineUSD ?? activePlan.pipelineBrutoUSD}</td>
                   <td className="py-2 text-right font-mono">{(data.pipelineTotal / 1e6).toFixed(1)}</td>
                   <td className="py-2 text-right font-mono">
-                    {activePlan.targetPipelineUSD > 0
-                      ? formatPercent(data.pipelineTotal / 1e6 / activePlan.targetPipelineUSD)
+                    {(activePlan.targetPipelineUSD ?? activePlan.pipelineBrutoUSD) > 0
+                      ? formatPercent(data.pipelineTotal / 1e6 / (activePlan.targetPipelineUSD ?? activePlan.pipelineBrutoUSD))
                       : '—'}
                   </td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2">Won (USD M)</td>
-                  <td className="py-2 text-right font-mono">{activePlan.targetWonUSD}</td>
+                  <td className="py-2" title="Valor acumulado de oportunidades adjudicadas (ganadas) en el trimestre, en millones de USD.">Ganado (USD M)</td>
+                  <td className="py-2 text-right font-mono">{activePlan.targetWonUSD ?? activePlan.wonUSD}</td>
                   <td className="py-2 text-right font-mono">{(data.wonTotal / 1e6).toFixed(1)}</td>
                   <td className="py-2 text-right font-mono">
-                    {activePlan.targetWonUSD > 0
-                      ? formatPercent(data.wonTotal / 1e6 / activePlan.targetWonUSD)
+                    {(activePlan.targetWonUSD ?? activePlan.wonUSD) > 0
+                      ? formatPercent(data.wonTotal / 1e6 / (activePlan.targetWonUSD ?? activePlan.wonUSD))
                       : '—'}
                   </td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2">Fees Bruto (USD M)</td>
-                  <td className="py-2 text-right font-mono">{activePlan.targetFeesUSD}</td>
+                  <td className="py-2" title="Suma de honorarios brutos devengados por las oportunidades del pipeline, en millones de USD.">Fees Bruto (USD M)</td>
+                  <td className="py-2 text-right font-mono">{activePlan.targetFeesUSD ?? activePlan.feesDevengadosUSD}</td>
                   <td className="py-2 text-right font-mono">{data.pipeline.totalGrossFees.toFixed(3)}</td>
                   <td className="py-2 text-right font-mono">
-                    {activePlan.targetFeesUSD > 0
-                      ? formatPercent(data.pipeline.totalGrossFees / activePlan.targetFeesUSD)
+                    {(activePlan.targetFeesUSD ?? activePlan.feesDevengadosUSD) > 0
+                      ? formatPercent(data.pipeline.totalGrossFees / (activePlan.targetFeesUSD ?? activePlan.feesDevengadosUSD))
                       : '—'}
                   </td>
                 </tr>
@@ -141,19 +141,19 @@ export default function QuarterReport() {
           <div className="grid grid-cols-4 gap-4 mb-4">
             <div className="text-center">
               <div className="font-mono text-2xl">{data.active.length}</div>
-              <div className="text-xs text-muted">Activas</div>
+              <div className="text-xs text-muted" title="Oportunidades actualmente en proceso en el pipeline (identificación hasta negociación).">Activas</div>
             </div>
             <div className="text-center">
               <div className="font-mono text-2xl text-green-net">{data.won.length}</div>
-              <div className="text-xs text-muted">Ganadas</div>
+              <div className="text-xs text-muted" title="Oportunidades adjudicadas exitosamente en el periodo.">Ganadas</div>
             </div>
             <div className="text-center">
               <div className="font-mono text-2xl text-red-soft">{data.lost.length}</div>
-              <div className="text-xs text-muted">Perdidas</div>
+              <div className="text-xs text-muted" title="Oportunidades que no se adjudicaron en el periodo.">Perdidas</div>
             </div>
             <div className="text-center">
               <div className="font-mono text-2xl">{opportunities.length}</div>
-              <div className="text-xs text-muted">Total</div>
+              <div className="text-xs text-muted" title="Número total de oportunidades gestionadas, incluyendo activas, ganadas, perdidas y dormidas.">Total</div>
             </div>
           </div>
 
@@ -161,11 +161,11 @@ export default function QuarterReport() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-muted">
-                  <th className="pb-2">Proyecto</th>
-                  <th className="pb-2">País</th>
-                  <th className="pb-2">Etapa</th>
-                  <th className="pb-2 text-right">Valor ASCH</th>
-                  <th className="pb-2 text-right">PoA</th>
+                  <th className="pb-2" title="Nombre del proyecto u oportunidad comercial.">Proyecto</th>
+                  <th className="pb-2" title="País donde se ubica la oportunidad.">País</th>
+                  <th className="pb-2" title="Fase actual de la oportunidad en el pipeline comercial.">Etapa</th>
+                  <th className="pb-2 text-right" title="Valor del contrato ASCH en dólares estadounidenses.">Valor ASCH</th>
+                  <th className="pb-2 text-right" title="Probabilidad de Adjudicación: estimación porcentual de ganar esta oportunidad.">PoA</th>
                 </tr>
               </thead>
               <tbody>
@@ -198,9 +198,9 @@ export default function QuarterReport() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-muted">
-                <th className="pb-2">País</th>
-                <th className="pb-2 text-right">Oportunidades</th>
-                <th className="pb-2 text-right">Valor Pipeline</th>
+                <th className="pb-2" title="País donde se ubican las oportunidades.">País</th>
+                <th className="pb-2 text-right" title="Cantidad de oportunidades activas en este país.">Oportunidades</th>
+                <th className="pb-2 text-right" title="Valor total del pipeline en USD para este país.">Valor Pipeline</th>
               </tr>
             </thead>
             <tbody>
@@ -221,8 +221,8 @@ export default function QuarterReport() {
 
         {/* Expense Summary */}
         <Card>
-          <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Resumen de Gastos</h3>
-          <div className="font-mono text-xl mb-2">
+          <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3" title="Resumen del gasto operacional del trimestre asociado a la actividad comercial.">Resumen de Gastos</h3>
+          <div className="font-mono text-xl mb-2" title="Suma total de todos los gastos registrados en el periodo, convertidos a USD.">
             Total: ${data.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
           <p className="text-xs text-muted">Detalle disponible en el Reporte de Gastos dedicado.</p>

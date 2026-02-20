@@ -2,6 +2,8 @@
 // AuthContext — Firebase Auth + Firestore roles
 // Provides: user, role, loading, login, logout, resetPassword
 // ─────────────────────────────────────────────────
+/* eslint-disable react-refresh/only-export-components */
+// Co-locating useAuth hook with AuthProvider is standard React context pattern
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import {
@@ -26,6 +28,7 @@ interface AuthUser {
 interface AuthContextValue {
   user: AuthUser | null
   loading: boolean
+  authError: string | null
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
@@ -69,6 +72,7 @@ async function updateLastLogin(uid: string) {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -83,8 +87,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             role,
           })
         } catch (err) {
-          console.error('Error reading user role:', err)
-          setUser(null)
+          console.error('Error reading user role from Firestore:', err)
+          // Fallback: user IS authenticated (Firebase Auth succeeded),
+          // but Firestore role lookup failed. Default to advisor role
+          // so the user isn't locked out by a backend glitch.
+          setAuthError('No se pudo verificar el rol. Usando permisos por defecto.')
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email ?? '',
+            displayName: firebaseUser.displayName,
+            role: 'advisor',
+          })
         }
       } else {
         setUser(null)
@@ -107,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, authError, login, logout, resetPassword }}>
       {children}
     </AuthContext.Provider>
   )

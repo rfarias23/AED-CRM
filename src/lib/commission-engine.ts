@@ -29,6 +29,18 @@ export function calculateCommission(
   }
 
   const tiers = [...feeStructure.tiers].sort((a, b) => a.minMillions - b.minMillions)
+
+  // Warn about gaps between tiers (misconfigured fee structures)
+  for (let i = 0; i < tiers.length - 1; i++) {
+    const currentMax = tiers[i].maxMillions
+    const nextMin = tiers[i + 1].minMillions
+    if (currentMax !== Infinity && Math.abs(currentMax - nextMin) > 0.001) {
+      console.warn(
+        `Fee structure "${feeStructure.name}": gap between tier ${i + 1} (max=${currentMax}M) and tier ${i + 2} (min=${nextMin}M)`,
+      )
+    }
+  }
+
   const tierBreakdown: TierBreakdownItem[] = []
   let grossFee = 0
 
@@ -81,11 +93,14 @@ export function calculateCommission(
 /**
  * Resolve which fee structure applies to an opportunity.
  * Resolution priority: project > country > sector > global default.
+ * Returns undefined if no fee structures are available (e.g. during initial load).
  */
 export function resolveFeeStructure(
   opportunity: Opportunity,
   feeStructures: FeeStructure[],
-): FeeStructure {
+): FeeStructure | undefined {
+  if (feeStructures.length === 0) return undefined
+
   // 1. Project-specific override
   if (opportunity.feeStructureId) {
     const projectSpecific = feeStructures.find(
@@ -112,7 +127,8 @@ export function resolveFeeStructure(
   const globalDefault = feeStructures.find((fs) => fs.isDefault)
   if (globalDefault) return globalDefault
 
-  throw new Error('No fee structure found — at least one global default is required')
+  // 5. Last resort — return first available structure
+  return feeStructures[0]
 }
 
 // ── Pipeline Fees Aggregation ────────────────────
@@ -136,13 +152,21 @@ export function calculatePipelineFees(
   feeStructures: FeeStructure[],
   withholdingProfiles: WithholdingProfile[],
 ): PipelineFeesSummary {
+  // Guard: if fee structures haven't loaded yet (or DB is empty),
+  // return empty results instead of throwing
+  if (feeStructures.length === 0) {
+    return { totalGrossFees: 0, totalWeightedFees: 0, byOpportunity: [] }
+  }
+
   let totalGrossFees = 0
   let totalWeightedFees = 0
 
   const byOpportunity = opportunities
     .filter((opp) => opp.stage !== 'lost' && opp.stage !== 'dormant')
+    .filter((opp) => resolveFeeStructure(opp, feeStructures) !== undefined)
     .map((opp) => {
-      const feeStructure = resolveFeeStructure(opp, feeStructures)
+      // Safe: filtered out undefined above; guard at top ensures feeStructures is non-empty
+      const feeStructure = resolveFeeStructure(opp, feeStructures)!
       const withholdingProfile = withholdingProfiles.find(
         (wp) => wp.jurisdictionCountry === opp.country,
       )

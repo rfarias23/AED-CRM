@@ -37,11 +37,11 @@ export default function CommissionForecast() {
 
       <div className="grid grid-cols-2 gap-4">
         <Card dark padding="sm">
-          <span className="text-xs text-white/60">Total Gross</span>
+          <span className="text-xs text-white/60" title="Suma de todos los honorarios brutos estimados del pipeline activo. Representa el ingreso máximo si se ganan todas las oportunidades.">Total Bruto</span>
           <div className="font-mono text-lg mt-1 text-gold-soft">USD {data.pipeline.totalGrossFees.toFixed(3)}M</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60">Total Weighted</span>
+          <span className="text-xs text-white/60" title="Honorarios ajustados por la probabilidad de adjudicación de cada oportunidad. Refleja el valor esperado realista de comisiones.">Total Ponderado</span>
           <div className="font-mono text-lg mt-1 text-green-net">USD {data.pipeline.totalWeightedFees.toFixed(3)}M</div>
         </Card>
       </div>
@@ -50,8 +50,8 @@ export default function CommissionForecast() {
         <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Fees por Etapa</h3>
         <table className="w-full text-sm">
           <thead><tr className="text-left text-muted">
-            <th className="pb-2">Etapa</th><th className="pb-2 text-right">Opp.</th>
-            <th className="pb-2 text-right">Gross Fee (M)</th><th className="pb-2 text-right">Weighted Fee (M)</th>
+            <th className="pb-2" title="Fase actual de la oportunidad en el pipeline comercial.">Etapa</th><th className="pb-2 text-right" title="Cantidad de oportunidades en esta etapa.">Opp.</th>
+            <th className="pb-2 text-right" title="Suma de honorarios brutos estimados de las oportunidades en esta etapa, en millones de USD.">Fee Bruto (M)</th><th className="pb-2 text-right" title="Fee bruto multiplicado por la probabilidad de adjudicación. Representa el valor esperado de comisiones por etapa.">Fee Ponderado (M)</th>
           </tr></thead>
           <tbody>
             {data.byStage.filter((s) => s.count > 0).map((s) => (
@@ -80,9 +80,9 @@ export default function CommissionForecast() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead><tr className="text-left text-muted">
-              <th className="pb-2">Proyecto</th><th className="pb-2">PoA</th>
-              <th className="pb-2 text-right">Gross</th><th className="pb-2 text-right">Weighted</th>
-              <th className="pb-2 text-right">Rate</th>
+              <th className="pb-2" title="Nombre del proyecto u oportunidad comercial.">Proyecto</th><th className="pb-2" title="Probabilidad de Adjudicación: estimación porcentual de ganar esta oportunidad.">PoA</th>
+              <th className="pb-2 text-right" title="Honorario bruto estimado en millones de USD antes de retenciones.">Bruto</th><th className="pb-2 text-right" title="Fee bruto ajustado por la probabilidad de adjudicación.">Ponderado</th>
+              <th className="pb-2 text-right" title="Tasa efectiva de comisión aplicada según la estructura de fees correspondiente.">Tasa</th>
             </tr></thead>
             <tbody>
               {data.pipeline.byOpportunity.map((item) => (

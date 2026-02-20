@@ -40,6 +40,18 @@ const columns = [
       </span>
     ),
   }),
+  col.accessor('email', {
+    header: 'Email',
+    cell: (info) => (
+      <span className="text-sm truncate max-w-[180px] block">{info.getValue() || '—'}</span>
+    ),
+  }),
+  col.accessor('phone', {
+    header: 'Teléfono',
+    cell: (info) => (
+      <span className="text-sm">{info.getValue() || '—'}</span>
+    ),
+  }),
   col.accessor('interactions', {
     header: 'Interacciones',
     cell: (info) => (

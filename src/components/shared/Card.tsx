@@ -5,6 +5,7 @@ interface CardProps {
   className?: string
   dark?: boolean
   padding?: 'sm' | 'md' | 'lg'
+  title?: string
 }
 
 const PADDING = {
@@ -18,6 +19,7 @@ export default function Card({
   className = '',
   dark = false,
   padding = 'md',
+  title,
 }: CardProps) {
   return (
     <div
@@ -26,6 +28,7 @@ export default function Card({
           ? 'bg-ink text-white border-transparent'
           : 'bg-white border-border'
       } ${className}`}
+      title={title}
     >
       {children}
     </div>

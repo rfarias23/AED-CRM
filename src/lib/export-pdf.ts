@@ -9,12 +9,30 @@ export async function exportToPDF(
   element: HTMLElement,
   filename: string,
 ): Promise<void> {
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    useCORS: true,
-    logging: false,
-    backgroundColor: '#ffffff',
-  })
+  let canvas: HTMLCanvasElement
+
+  try {
+    // Try scale 2 first (high-quality)
+    canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+    })
+  } catch {
+    // Fallback to scale 1 if canvas is too large (OOM on big reports)
+    console.warn('html2canvas failed at scale 2, retrying at scale 1')
+    try {
+      canvas = await html2canvas(element, {
+        scale: 1,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+      })
+    } catch (err) {
+      throw new Error(`Error generando PDF: el reporte es demasiado grande para capturar. ${err instanceof Error ? err.message : err}`)
+    }
+  }
 
   const imgData = canvas.toDataURL('image/png')
   const imgWidth = 210 // A4 width in mm

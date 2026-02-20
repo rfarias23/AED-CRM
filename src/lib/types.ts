@@ -288,14 +288,41 @@ export interface Expense {
   type: ExpenseType
   description: string
   vendor: string
+  country: string             // ISO code — destination/origin of expense
   amountOriginal: number
   currency: Currency
   amountUSD: number
   receiptRef?: string
   opportunityId?: string
+  tripId?: string             // back-reference to Trip
   quarterId?: string
   tags: string[]
   createdAt: string
+}
+
+// ── Trips ────────────────────────────────────
+
+export type TripStatus = 'draft' | 'submitted' | 'approved' | 'closed'
+
+export interface Trip {
+  id: string
+  name: string                  // "Viaje Lima - Solar Moquegua"
+  country: string               // ISO destination
+  city?: string
+  departureDate: string
+  returnDate: string
+  purpose: string
+  participants?: string[]
+  budgetUSD?: number
+  actualUSD: number             // Computed sum of expenses
+  opportunityId?: string
+  status: TripStatus
+  approvedBy?: string
+  approvedAt?: string
+  conclusions?: string
+  expenseIds: string[]
+  createdAt: string
+  updatedAt: string
 }
 
 // ── Planning ─────────────────────────────────────
@@ -322,20 +349,64 @@ export interface QuarterPlan {
   id: string
   year: number
   quarter: 1 | 2 | 3 | 4
-  status: 'draft' | 'active' | 'closed'
+  status: 'draft' | 'active' | 'closed' | 'reviewed'
 
-  // Targets
-  targetPipelineUSD: number
-  targetWonUSD: number
-  targetFeesUSD: number
+  // ── Pipeline Input ──
+  pipelineBrutoUSD: number
+  opportunidadesActivas: number
+  pipelinePorFase: {
+    identification: number
+    qualification: number
+    proposal: number
+    negotiation: number
+  }
+
+  // ── Conversion ──
+  opportunidadesEvaluadas: number
+  opportunidadesGo: number
+  winRateTarget: number             // 0-1
+
+  // ── Results ──
+  wonUSD: number
+  lostUSD: number
+  feesDevengadosUSD: number
+  feesCobradosUSD: number
+
+  // ── Vintage & Aging ──
+  agingPromedioMeses: number
+  pipelineNuevoUSD: number
+  pipelineSalidoUSD: number
+  velocidadPipelineMeses: number
+  vintageWon: string[]
+
+  // ── Commercial Cost ──
+  bidCostUSD: number
+  budgetUSD: number
+
+  // ── Activity (Leading Indicators) ──
   targetNewContacts: number
   targetInteractionsPerWeek: number
   targetMeetingsPerWeek: number
+  reunionesDecisionMakers: number
 
+  // ── Narrative ──
   strategicPriorities: string[]
-  milestones: PlanMilestone[]
-  budgetUSD: number
+  top3Oportunidades: {
+    name: string
+    valueUSD: number
+    stage: string
+    pWin: number
+    nextMilestone: string
+  }[]
+  riesgos: string[]
   notes: string
+
+  milestones: PlanMilestone[]
+
+  // Legacy compatibility (kept for backward compat with old seed data)
+  targetPipelineUSD?: number
+  targetWonUSD?: number
+  targetFeesUSD?: number
 
   createdAt: string
   updatedAt: string

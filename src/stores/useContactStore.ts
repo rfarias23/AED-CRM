@@ -14,7 +14,7 @@ interface ContactState {
   addInteraction: (contactId: string, data: Omit<Interaction, 'id' | 'createdAt'>) => Promise<Interaction>
 }
 
-export const useContactStore = create<ContactState>((set, get) => ({
+export const useContactStore = create<ContactState>((set) => ({
   contacts: [],
   loading: false,
 
@@ -59,7 +59,9 @@ export const useContactStore = create<ContactState>((set, get) => ({
       id: uuid(),
       createdAt: new Date().toISOString(),
     }
-    const contact = get().contacts.find((c) => c.id === contactId)
+    // Read from DB (not Zustand) to avoid lost-update race condition
+    // when two rapid addInteraction calls overlap
+    const contact = await db.contacts.get(contactId)
     if (!contact) throw new Error(`Contact not found: ${contactId}`)
 
     const interactions = [...contact.interactions, interaction]

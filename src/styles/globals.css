@@ -4,17 +4,17 @@
 
 /* Design Tokens */
 @theme {
-  --color-ink: #1a1a1a;
-  --color-paper: #f8f6f1;
-  --color-cream: #eee9df;
-  --color-accent: #2c5545;
-  --color-gold: #b8860b;
-  --color-gold-soft: #d4a843;
-  --color-muted: #7a7568;
-  --color-border: #d5d0c5;
-  --color-tier1: #2c5545;
-  --color-tier2: #5b4a8a;
-  --color-tier3: #8a6d3b;
+  --color-ink: #3F3D33;
+  --color-paper: #FAF6F0;
+  --color-cream: #EDDFD0;
+  --color-accent: #A04F47;
+  --color-gold: #735D43;
+  --color-gold-soft: #A99F8F;
+  --color-muted: #5B5E5E;
+  --color-border: #D6D3CB;
+  --color-tier1: #A04F47;
+  --color-tier2: #644B27;
+  --color-tier3: #452B1B;
   --color-white: #ffffff;
   --color-red: #9e2a2b;
   --color-red-soft: #c0392b;
@@ -27,17 +27,17 @@
 
 /* CSS Custom Properties (for direct var() usage) */
 :root {
-  --ink: #1a1a1a;
-  --paper: #f8f6f1;
-  --cream: #eee9df;
-  --accent: #2c5545;
-  --gold: #b8860b;
-  --gold-soft: #d4a843;
-  --muted: #7a7568;
-  --border: #d5d0c5;
-  --tier1: #2c5545;
-  --tier2: #5b4a8a;
-  --tier3: #8a6d3b;
+  --ink: #3F3D33;
+  --paper: #FAF6F0;
+  --cream: #EDDFD0;
+  --accent: #A04F47;
+  --gold: #735D43;
+  --gold-soft: #A99F8F;
+  --muted: #5B5E5E;
+  --border: #D6D3CB;
+  --tier1: #A04F47;
+  --tier2: #644B27;
+  --tier3: #452B1B;
   --white: #ffffff;
   --red: #9e2a2b;
   --red-soft: #c0392b;

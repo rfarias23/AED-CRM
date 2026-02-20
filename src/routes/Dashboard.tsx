@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
 import { useOpportunityStore } from '@/stores/useOpportunityStore'
+import { useSettingsStore } from '@/stores/useSettingsStore'
+import { useCurrencyStore } from '@/stores/useCurrencyStore'
 import { calculatePipelineFees } from '@/lib/commission-engine'
+import { convertFromUSD, formatMoney } from '@/lib/currency-engine'
 import { getTemperature } from '@/components/pipeline/temperature'
 import KPICard from '@/components/shared/KPICard'
 import Card from '@/components/shared/Card'
@@ -22,11 +25,30 @@ export default function Dashboard() {
   const load = useOpportunityStore((s) => s.load)
   useEffect(() => { load() }, [load])
 
+  const displayCurrency = useSettingsStore((s) => s.displayCurrency)
+  const rateMap = useCurrencyStore((s) => s.rateMap)
+
   const opportunities = useLiveQuery(() => db.opportunities.toArray(), []) ?? []
   const feeStructures = useLiveQuery(() => db.feeStructures.toArray(), []) ?? []
   const withholdingProfiles = useLiveQuery(() => db.withholdingProfiles.toArray(), []) ?? []
   const expenses = useLiveQuery(() => db.expenses.toArray(), []) ?? []
   const contacts = useLiveQuery(() => db.contacts.toArray(), []) ?? []
+
+  // Helper: convert USD → display currency (safe fallback to USD if rate missing)
+  const toDisplay = useMemo(() => {
+    return (amountUSD: number) => {
+      try {
+        return convertFromUSD(amountUSD, displayCurrency, rateMap)
+      } catch {
+        return amountUSD // Fallback: show USD if rate not found
+      }
+    }
+  }, [displayCurrency, rateMap])
+
+  // Helper: format in display currency with compact notation
+  const fmt = useMemo(() => {
+    return (amountUSD: number) => formatMoney(toDisplay(amountUSD), displayCurrency, { compact: true })
+  }, [toDisplay, displayCurrency])
 
   const stats = useMemo(() => {
     const active = opportunities.filter((o) => ACTIVE_STAGES.includes(o.stage))
@@ -37,8 +59,10 @@ export default function Dashboard() {
     const weighted = active.reduce((sum, o) => sum + o.aschValueUSD * o.probabilityOfAward, 0)
     const wonTotal = won.reduce((sum, o) => sum + o.aschValueUSD, 0)
     const totalExpenses = expenses.reduce((sum, e) => sum + e.amountUSD, 0)
+    // Gross fees are in USD millions — convert to raw USD for consistent formatting
+    const grossFeesUSD = pipeline.totalGrossFees * 1_000_000
 
-    // By stage counts
+    // By stage counts (values in raw USD for conversion)
     const byStage = STAGE_ORDER.map((stage) => ({
       stage,
       count: opportunities.filter((o) => o.stage === stage).length,
@@ -67,9 +91,7 @@ export default function Dashboard() {
       .slice(0, 5)
 
     return {
-      pipelineTotal, weighted, wonTotal, totalExpenses,
-      grossFees: pipeline.totalGrossFees,
-      weightedFees: pipeline.totalWeightedFees,
+      pipelineTotal, weighted, wonTotal, totalExpenses, grossFeesUSD,
       byStage, tempCounts,
       allInteractions, coldAlerts,
       activeCount: active.length,
@@ -78,22 +100,28 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-2xl">Dashboard</h1>
+      <h1 className="font-heading text-2xl">Panel Principal</h1>
 
       {/* KPI Bar */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <KPICard label="Pipeline Total" value={`$${(stats.pipelineTotal / 1e6).toFixed(0)}M`}
-          icon={<DollarSign className="w-5 h-5" />} />
-        <KPICard label="Ponderado" value={`$${(stats.weighted / 1e6).toFixed(0)}M`}
-          icon={<TrendingUp className="w-5 h-5" />} />
-        <KPICard label="Fees Bruto" value={`$${stats.grossFees.toFixed(2)}M`}
-          icon={<DollarSign className="w-5 h-5" />} />
-        <KPICard label="Won YTD" value={`$${(stats.wonTotal / 1e6).toFixed(0)}M`}
-          icon={<Award className="w-5 h-5" />} />
-        <KPICard label="Gastos Q" value={`$${stats.totalExpenses.toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
-          icon={<Receipt className="w-5 h-5" />} />
+        <KPICard label="Pipeline Total" value={fmt(stats.pipelineTotal)}
+          icon={<DollarSign className="w-5 h-5" />}
+          tooltip="Valor total (ASCH) de las oportunidades activas: Identificación, Calificación, Propuesta y Negociación." />
+        <KPICard label="Ponderado" value={fmt(stats.weighted)}
+          icon={<TrendingUp className="w-5 h-5" />}
+          tooltip="Pipeline Total ajustado por la probabilidad de ganar cada oportunidad. Refleja el valor esperado realista." />
+        <KPICard label="Fees Bruto" value={fmt(stats.grossFeesUSD)}
+          icon={<DollarSign className="w-5 h-5" />}
+          tooltip="Comisiones brutas estimadas sobre el pipeline activo, antes de retenciones e impuestos." />
+        <KPICard label="Ganado YTD" value={fmt(stats.wonTotal)}
+          icon={<Award className="w-5 h-5" />}
+          tooltip="Valor total (ASCH) de oportunidades ganadas en lo que va del año." />
+        <KPICard label="Gastos Q" value={formatMoney(toDisplay(stats.totalExpenses), displayCurrency)}
+          icon={<Receipt className="w-5 h-5" />}
+          tooltip="Total de gastos registrados en el trimestre actual: viajes, representación, y otros costos operativos." />
         <KPICard label="Opp. Activas" value={stats.activeCount.toString()}
-          icon={<Activity className="w-5 h-5" />} />
+          icon={<Activity className="w-5 h-5" />}
+          tooltip="Número de oportunidades en etapas activas (excluyendo ganadas, perdidas y dormidas)." />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -110,8 +138,8 @@ export default function Dashboard() {
                   <div className="flex-1 bg-cream rounded-full h-3 overflow-hidden">
                     <div className="bg-accent h-full rounded-full transition-all" style={{ width: `${pct}%` }} />
                   </div>
-                  <span className="font-mono text-xs text-muted w-20 text-right">
-                    ${(s.value / 1e6).toFixed(0)}M ({s.count})
+                  <span className="font-mono text-xs text-muted w-28 text-right">
+                    {fmt(s.value)} ({s.count})
                   </span>
                 </div>
               )
