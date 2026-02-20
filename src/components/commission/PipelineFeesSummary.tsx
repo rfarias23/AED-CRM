@@ -1,20 +1,30 @@
 import { useMemo } from 'react'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { db } from '@/lib/db'
 import { calculatePipelineFees } from '@/lib/commission-engine'
 import type { Opportunity, FeeStructure, WithholdingProfile } from '@/lib/types'
 import KPICard from '@/components/shared/KPICard'
 import { DollarSign, TrendingUp, Percent } from 'lucide-react'
 
 interface PipelineFeesSummaryProps {
-  opportunities: Opportunity[]
-  feeStructures: FeeStructure[]
-  withholdingProfiles: WithholdingProfile[]
+  opportunities?: Opportunity[]
+  feeStructures?: FeeStructure[]
+  withholdingProfiles?: WithholdingProfile[]
 }
 
 export default function PipelineFeesSummary({
-  opportunities,
-  feeStructures,
-  withholdingProfiles,
-}: PipelineFeesSummaryProps) {
+  opportunities: oppsProp,
+  feeStructures: fsProp,
+  withholdingProfiles: whProp,
+}: PipelineFeesSummaryProps = {}) {
+  const oppsQuery = useLiveQuery(() => db.opportunities.toArray(), [])
+  const fsQuery = useLiveQuery(() => db.feeStructures.toArray(), [])
+  const whQuery = useLiveQuery(() => db.withholdingProfiles.toArray(), [])
+
+  const opportunities = oppsProp ?? oppsQuery ?? []
+  const feeStructures = fsProp ?? fsQuery ?? []
+  const withholdingProfiles = whProp ?? whQuery ?? []
+
   const summary = useMemo(
     () => calculatePipelineFees(opportunities, feeStructures, withholdingProfiles),
     [opportunities, feeStructures, withholdingProfiles],
