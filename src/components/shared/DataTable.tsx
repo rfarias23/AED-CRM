@@ -12,8 +12,9 @@ import { useState } from 'react'
 import { ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface DataTableProps<T> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: T[]
-  columns: ColumnDef<T, unknown>[]
+  columns: ColumnDef<T, any>[]
   searchPlaceholder?: string
   pageSize?: number
 }

@@ -4,6 +4,8 @@ import PageShell from './components/layout/PageShell'
 import Dashboard from './routes/Dashboard'
 import FeeCalculator from './routes/FeeCalculator'
 import Opportunities from './routes/Opportunities'
+import OpportunityForm from './routes/Opportunities/OpportunityForm'
+import OpportunityDetail from './routes/Opportunities/OpportunityDetail'
 import Contacts from './routes/Contacts'
 import Expenses from './routes/Expenses'
 import CommercialPlan from './routes/CommercialPlan'
@@ -33,6 +35,9 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="calculator" element={<FeeCalculator />} />
           <Route path="opportunities" element={<Opportunities />} />
+          <Route path="opportunities/new" element={<OpportunityForm />} />
+          <Route path="opportunities/:id" element={<OpportunityDetail />} />
+          <Route path="opportunities/:id/edit" element={<OpportunityForm />} />
           <Route path="contacts" element={<Contacts />} />
           <Route path="expenses" element={<Expenses />} />
           <Route path="plan" element={<CommercialPlan />} />

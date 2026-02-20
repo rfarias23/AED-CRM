@@ -68,6 +68,7 @@ export async function seedIfEmpty(): Promise<void> {
     DEFAULT_WITHHOLDING_PROFILES,
   } = await import('./constants')
   const { DEFAULT_INTENSITY_CONFIG } = await import('./intensity-benchmarks')
+  const { createSeedOpportunities } = await import('./seed-opportunities')
 
   await db.transaction(
     'rw',
@@ -77,6 +78,7 @@ export async function seedIfEmpty(): Promise<void> {
       db.feeStructures,
       db.withholdingProfiles,
       db.intensityConfig,
+      db.opportunities,
       db.settings,
     ],
     async () => {
@@ -85,6 +87,7 @@ export async function seedIfEmpty(): Promise<void> {
       await db.feeStructures.bulkAdd(DEFAULT_FEE_STRUCTURES)
       await db.withholdingProfiles.bulkAdd(DEFAULT_WITHHOLDING_PROFILES)
       await db.intensityConfig.add(DEFAULT_INTENSITY_CONFIG)
+      await db.opportunities.bulkAdd(createSeedOpportunities())
       await db.settings.add({
         key: 'app',
         value: JSON.stringify({
