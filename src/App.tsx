@@ -27,7 +27,7 @@ import TeamManagement from './routes/TeamManagement'
 import { seedIfEmpty } from './lib/db'
 import { useSettingsStore } from './stores/useSettingsStore'
 import { useCurrencyStore } from './stores/useCurrencyStore'
-import { Building2 } from 'lucide-react'
+// Loading screen uses inline branding (no icon imports needed)
 
 export default function App() {
   const loadSettings = useSettingsStore((s) => s.load)
@@ -49,11 +49,9 @@ export default function App() {
     return (
       <div className="min-h-screen bg-paper flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-accent rounded-2xl mb-4 animate-pulse">
-            <Building2 className="w-7 h-7 text-white" />
-          </div>
-          <h1 className="font-heading text-xl text-ink mb-1">FyF Public Relations</h1>
-          <p className="text-sm text-muted mb-4">Management Center</p>
+          <h1 className="font-heading text-3xl text-ink tracking-tight mb-1">FyF</h1>
+          <div className="w-12 h-px bg-accent mx-auto my-2" />
+          <p className="text-xs text-muted uppercase tracking-[0.25em] font-medium mb-6">Public Relations</p>
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto" />
         </div>
       </div>

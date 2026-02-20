@@ -83,6 +83,11 @@ export const db = new AppDB()
 
 // ── Seed Loader ──────────────────────────────────
 
+/**
+ * Seed reference/config data that ALL users need (country profiles,
+ * exchange rates, fee structures, withholding profiles, intensity config).
+ * Runs once per browser regardless of user role.
+ */
 export async function seedIfEmpty(): Promise<void> {
   const profileCount = await db.countryProfiles.count()
   if (profileCount > 0) return // Already seeded
@@ -94,10 +99,6 @@ export async function seedIfEmpty(): Promise<void> {
     DEFAULT_WITHHOLDING_PROFILES,
   } = await import('./constants')
   const { DEFAULT_INTENSITY_CONFIG } = await import('./intensity-benchmarks')
-  const { createSeedOpportunities } = await import('./seed-opportunities')
-  const { createSeedContacts, createSeedInteractions } = await import('./seed-contacts')
-  const { createSeedExpenses } = await import('./seed-expenses')
-  const { createSeedPlans } = await import('./seed-plans')
 
   await db.transaction(
     'rw',
@@ -107,10 +108,6 @@ export async function seedIfEmpty(): Promise<void> {
       db.feeStructures,
       db.withholdingProfiles,
       db.intensityConfig,
-      db.opportunities,
-      db.contacts,
-      db.expenses,
-      db.quarterPlans,
       db.settings,
     ],
     async () => {
@@ -119,9 +116,40 @@ export async function seedIfEmpty(): Promise<void> {
       await db.feeStructures.bulkAdd(DEFAULT_FEE_STRUCTURES)
       await db.withholdingProfiles.bulkAdd(DEFAULT_WITHHOLDING_PROFILES)
       await db.intensityConfig.add(DEFAULT_INTENSITY_CONFIG)
+
+      await db.settings.add({
+        key: 'app',
+        value: JSON.stringify({
+          displayCurrency: 'USD',
+          sidebarCollapsed: false,
+          profileName: '',
+          profileCompany: '',
+          profileEmail: '',
+        }),
+      })
+    },
+  )
+}
+
+/**
+ * Seed demo/dummy commercial data (opportunities, contacts, expenses, plans).
+ * Only called for admin users after authentication.
+ */
+export async function seedDemoData(): Promise<void> {
+  const oppCount = await db.opportunities.count()
+  if (oppCount > 0) return // Demo data already loaded
+
+  const { createSeedOpportunities } = await import('./seed-opportunities')
+  const { createSeedContacts, createSeedInteractions } = await import('./seed-contacts')
+  const { createSeedExpenses } = await import('./seed-expenses')
+  const { createSeedPlans } = await import('./seed-plans')
+
+  await db.transaction(
+    'rw',
+    [db.opportunities, db.contacts, db.expenses, db.quarterPlans],
+    async () => {
       await db.opportunities.bulkAdd(createSeedOpportunities())
 
-      // Seed contacts with interactions
       const contacts = createSeedContacts()
       const interactionPairs = createSeedInteractions(contacts)
       for (const { contactId, interaction } of interactionPairs) {
@@ -132,17 +160,6 @@ export async function seedIfEmpty(): Promise<void> {
 
       await db.expenses.bulkAdd(createSeedExpenses())
       await db.quarterPlans.bulkAdd(createSeedPlans())
-
-      await db.settings.add({
-        key: 'app',
-        value: JSON.stringify({
-          displayCurrency: 'USD',
-          sidebarCollapsed: false,
-          profileName: 'Rodolfo Farias Corrales',
-          profileCompany: 'Independent Consultant',
-          profileEmail: '',
-        }),
-      })
     },
   )
 }
