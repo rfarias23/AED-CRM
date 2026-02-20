@@ -1,0 +1,153 @@
+import { useMemo } from 'react'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { db } from '@/lib/db'
+import { getTemperature } from '@/components/pipeline/temperature'
+import Card from '@/components/shared/Card'
+import { TemperatureDot } from '@/components/shared/Badge'
+import CountryFlag from '@/components/shared/CountryFlag'
+import { formatRelativeDate } from '@/lib/formatters'
+import { AlertTriangle, Shield } from 'lucide-react'
+import type { OpportunityStage, Temperature } from '@/lib/types'
+
+const ACTIVE_STAGES: OpportunityStage[] = ['identification', 'qualification', 'proposal', 'negotiation']
+
+export default function IntensityReport() {
+  const opportunities = useLiveQuery(() => db.opportunities.toArray(), []) ?? []
+  const contacts = useLiveQuery(() => db.contacts.toArray(), []) ?? []
+  const config = useLiveQuery(() => db.intensityConfig.toCollection().first(), [])
+
+  const data = useMemo(() => {
+    const active = opportunities.filter((o) => ACTIVE_STAGES.includes(o.stage))
+    const allInteractions = contacts.flatMap((c) => c.interactions)
+
+    // Activity summary
+    const now = new Date()
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const thisWeek = allInteractions.filter((ix) => new Date(ix.date) >= weekAgo)
+    const meetings = thisWeek.filter((ix) => ix.type === 'meeting' || ix.type === 'presentation' || ix.type === 'site_visit')
+    const highQuality = thisWeek.filter((ix) => ix.quality === 'high')
+
+    // Temperature map
+    const tempMap: Array<{ id: string; name: string; country: string; temp: Temperature; lastUpdate: string }> = []
+    for (const opp of active) {
+      tempMap.push({
+        id: opp.id,
+        name: opp.name,
+        country: opp.country,
+        temp: getTemperature(opp, config?.thresholds),
+        lastUpdate: opp.updatedAt,
+      })
+    }
+    tempMap.sort((a, b) => {
+      const order: Temperature[] = ['dormant', 'cold', 'cool', 'warm', 'hot']
+      return order.indexOf(a.temp) - order.indexOf(b.temp)
+    })
+
+    // Attention needed
+    const attentionNeeded = tempMap.filter((t) => t.temp === 'cold' || t.temp === 'dormant')
+
+    // Interaction types distribution
+    const typeDistribution = new Map<string, number>()
+    for (const ix of allInteractions) {
+      typeDistribution.set(ix.type, (typeDistribution.get(ix.type) ?? 0) + 1)
+    }
+
+    return {
+      weeklyInteractions: thisWeek.length,
+      weeklyMeetings: meetings.length,
+      highQualityCount: highQuality.length,
+      highQualityPct: thisWeek.length > 0 ? highQuality.length / thisWeek.length : 0,
+      totalInteractions: allInteractions.length,
+      tempMap,
+      attentionNeeded,
+      typeDistribution: Array.from(typeDistribution.entries()).sort((a, b) => b[1] - a[1]),
+      activeCount: active.length,
+    }
+  }, [opportunities, contacts, config])
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-2">
+        <h2 className="font-heading text-xl">Reporte de Intensidad</h2>
+        <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded text-xs font-medium flex items-center gap-1">
+          <Shield className="w-3 h-3" /> INTERNO
+        </span>
+      </div>
+
+      {/* Activity KPIs */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card dark padding="sm">
+          <span className="text-xs text-white/60">Interacciones/Sem</span>
+          <div className="font-mono text-2xl mt-1">{data.weeklyInteractions}</div>
+          <span className="text-xs text-white/40">Target: {config?.benchmarks.interactionsPerWeek ?? 8}</span>
+        </Card>
+        <Card dark padding="sm">
+          <span className="text-xs text-white/60">Reuniones/Sem</span>
+          <div className="font-mono text-2xl mt-1">{data.weeklyMeetings}</div>
+          <span className="text-xs text-white/40">Target: {config?.benchmarks.meetingsPerWeek ?? 3}</span>
+        </Card>
+        <Card dark padding="sm">
+          <span className="text-xs text-white/60">% Alta Calidad</span>
+          <div className="font-mono text-2xl mt-1">{(data.highQualityPct * 100).toFixed(0)}%</div>
+          <span className="text-xs text-white/40">Target: {((config?.benchmarks.highQualityPctTarget ?? 0.4) * 100).toFixed(0)}%</span>
+        </Card>
+        <Card dark padding="sm">
+          <span className="text-xs text-white/60">Total Interacciones</span>
+          <div className="font-mono text-2xl mt-1">{data.totalInteractions}</div>
+        </Card>
+      </div>
+
+      {/* Temperature heatmap */}
+      <Card>
+        <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Mapa de Temperatura</h3>
+        <div className="space-y-2">
+          {data.tempMap.map((item) => (
+            <div key={item.id} className="flex items-center gap-3 text-sm py-1.5 border-b border-border last:border-0">
+              <TemperatureDot temperature={item.temp} />
+              <CountryFlag code={item.country} size="sm" />
+              <span className="flex-1 truncate">{item.name}</span>
+              <span className="text-xs text-muted">{formatRelativeDate(item.lastUpdate)}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Interaction types */}
+      <Card>
+        <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Distribución de Esfuerzo</h3>
+        <div className="space-y-2">
+          {data.typeDistribution.map(([type, count]) => {
+            const pct = data.totalInteractions > 0 ? (count / data.totalInteractions) * 100 : 0
+            return (
+              <div key={type} className="flex items-center gap-3">
+                <span className="text-sm w-36 capitalize">{type.replace('_', ' ')}</span>
+                <div className="flex-1 bg-cream rounded-full h-2 overflow-hidden">
+                  <div className="bg-tier2 h-full rounded-full" style={{ width: `${pct}%` }} />
+                </div>
+                <span className="font-mono text-xs text-muted w-12 text-right">{count}</span>
+              </div>
+            )
+          })}
+        </div>
+      </Card>
+
+      {/* Attention needed */}
+      {data.attentionNeeded.length > 0 && (
+        <Card>
+          <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-gold" /> Requieren Atención
+          </h3>
+          <div className="space-y-2">
+            {data.attentionNeeded.map((item) => (
+              <div key={item.id} className="flex items-center gap-3 text-sm">
+                <TemperatureDot temperature={item.temp} showLabel />
+                <span className="flex-1">{item.name}</span>
+                <span className="text-xs text-muted">{formatRelativeDate(item.lastUpdate)}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+    </div>
+  )
+}

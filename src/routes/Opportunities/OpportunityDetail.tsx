@@ -10,6 +10,7 @@ import MoneyDisplay from '@/components/shared/MoneyDisplay'
 import CountryFlag from '@/components/shared/CountryFlag'
 import FeeCalculatorInline from '@/components/commission/FeeCalculatorInline'
 import StageGate from '@/components/pipeline/StageGate'
+import IntensityScorecard from '@/components/intensity/IntensityScorecard'
 import { formatDate, formatPercent } from '@/lib/formatters'
 import { Pencil, Trash2, ArrowLeft, GitBranch } from 'lucide-react'
 import type { OpportunityStage } from '@/lib/types'
@@ -72,7 +73,7 @@ export default function OpportunityDetail() {
   const withholdingProfiles = useLiveQuery(() => db.withholdingProfiles.toArray(), [])
 
   const [showStageGate, setShowStageGate] = useState(false)
-  const [activeTab, setActiveTab] = useState<'details' | 'history' | 'expenses'>('details')
+  const [activeTab, setActiveTab] = useState<'details' | 'history' | 'expenses' | 'intensity'>('details')
 
   useEffect(() => { load() }, [load])
 
@@ -153,12 +154,12 @@ export default function OpportunityDetail() {
 
       {/* Tabs */}
       <div className="flex gap-1 bg-cream rounded-lg p-1">
-        {(['details', 'history', 'expenses'] as const).map((tab) => (
+        {(['details', 'history', 'expenses', 'intensity'] as const).map((tab) => (
           <button key={tab} onClick={() => setActiveTab(tab)}
             className={`flex-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
               activeTab === tab ? 'bg-white shadow-sm text-ink' : 'text-muted hover:text-ink'
             }`}>
-            {tab === 'details' ? 'Detalles' : tab === 'history' ? 'Historial' : 'Gastos'}
+            {tab === 'details' ? 'Detalles' : tab === 'history' ? 'Historial' : tab === 'expenses' ? 'Gastos' : 'Intensidad'}
           </button>
         ))}
       </div>
@@ -238,6 +239,10 @@ export default function OpportunityDetail() {
 
       {activeTab === 'expenses' && (
         <ExpenseTab opportunityId={opp.id} />
+      )}
+
+      {activeTab === 'intensity' && (
+        <IntensityScorecard opportunityId={opp.id} />
       )}
 
       {/* Stage Gate Modal */}

@@ -71,6 +71,7 @@ export async function seedIfEmpty(): Promise<void> {
   const { createSeedOpportunities } = await import('./seed-opportunities')
   const { createSeedContacts, createSeedInteractions } = await import('./seed-contacts')
   const { createSeedExpenses } = await import('./seed-expenses')
+  const { createSeedPlans } = await import('./seed-plans')
 
   await db.transaction(
     'rw',
@@ -83,6 +84,7 @@ export async function seedIfEmpty(): Promise<void> {
       db.opportunities,
       db.contacts,
       db.expenses,
+      db.quarterPlans,
       db.settings,
     ],
     async () => {
@@ -103,6 +105,7 @@ export async function seedIfEmpty(): Promise<void> {
       await db.contacts.bulkAdd(contacts)
 
       await db.expenses.bulkAdd(createSeedExpenses())
+      await db.quarterPlans.bulkAdd(createSeedPlans())
 
       await db.settings.add({
         key: 'app',
