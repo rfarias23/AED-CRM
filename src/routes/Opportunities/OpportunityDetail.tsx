@@ -129,21 +129,21 @@ export default function OpportunityDetail() {
       {/* Stage + KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card dark padding="sm" title="Fase actual en el pipeline de ventas. Cada etapa refleja el nivel de madurez y probabilidad de cierre.">
-          <span className="text-xs text-white/60">Etapa</span>
+          <span className="text-xs text-muted">Etapa</span>
           <div className="mt-1"><StageBadge stage={opp.stage} /></div>
         </Card>
         <Card dark padding="sm" title="Valor total del contrato según el modelo ASCH (Alcance, Sistema, Costo, Honorarios). Representa el monto bruto de la oportunidad.">
-          <span className="text-xs text-white/60">Valor ASCH</span>
+          <span className="text-xs text-muted">Valor ASCH</span>
           <div className="mt-1 font-mono text-lg">
             <MoneyDisplay amount={opp.aschValueUSD} currency="USD" compact />
           </div>
         </Card>
         <Card dark padding="sm" title="Estimación del porcentaje de probabilidad de ganar esta oportunidad. Se basa en la etapa, competencia y relación con el cliente.">
-          <span className="text-xs text-white/60">PoA</span>
+          <span className="text-xs text-muted">PoA</span>
           <div className="mt-1 font-mono text-lg">{formatPercent(opp.probabilityOfAward)}</div>
         </Card>
         <Card dark padding="sm" title="Honorario bruto estimado según la estructura de fees aplicable. Es el ingreso potencial antes de retenciones e impuestos.">
-          <span className="text-xs text-white/60">Fee Bruto</span>
+          <span className="text-xs text-muted">Fee Bruto</span>
           <div className="mt-1 font-mono text-lg text-gold-soft">
             {commission ? `USD ${commission.grossFee.toFixed(3)}M` : '—'}
           </div>

@@ -77,22 +77,22 @@ export default function IntensityReport() {
       {/* Activity KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Número total de interacciones registradas en los últimos 7 días. Mide el ritmo de actividad comercial semanal.">Interacciones/Sem</span>
+          <span className="text-xs text-muted" title="Número total de interacciones registradas en los últimos 7 días. Mide el ritmo de actividad comercial semanal.">Interacciones/Sem</span>
           <div className="font-mono text-2xl mt-1">{data.weeklyInteractions}</div>
-          <span className="text-xs text-white/40">Objetivo: {config?.benchmarks.interactionsPerWeek ?? 8}</span>
+          <span className="text-xs text-muted/70">Objetivo: {config?.benchmarks.interactionsPerWeek ?? 8}</span>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Reuniones presenciales, presentaciones y visitas de sitio realizadas esta semana. Las reuniones son las interacciones de mayor impacto comercial.">Reuniones/Sem</span>
+          <span className="text-xs text-muted" title="Reuniones presenciales, presentaciones y visitas de sitio realizadas esta semana. Las reuniones son las interacciones de mayor impacto comercial.">Reuniones/Sem</span>
           <div className="font-mono text-2xl mt-1">{data.weeklyMeetings}</div>
-          <span className="text-xs text-white/40">Objetivo: {config?.benchmarks.meetingsPerWeek ?? 3}</span>
+          <span className="text-xs text-muted/70">Objetivo: {config?.benchmarks.meetingsPerWeek ?? 3}</span>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Porcentaje de interacciones semanales calificadas como alta calidad. Refleja la profundidad y relevancia de las conversaciones comerciales.">% Alta Calidad</span>
+          <span className="text-xs text-muted" title="Porcentaje de interacciones semanales calificadas como alta calidad. Refleja la profundidad y relevancia de las conversaciones comerciales.">% Alta Calidad</span>
           <div className="font-mono text-2xl mt-1">{(data.highQualityPct * 100).toFixed(0)}%</div>
-          <span className="text-xs text-white/40">Objetivo: {((config?.benchmarks.highQualityPctTarget ?? 0.4) * 100).toFixed(0)}%</span>
+          <span className="text-xs text-muted/70">Objetivo: {((config?.benchmarks.highQualityPctTarget ?? 0.4) * 100).toFixed(0)}%</span>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Cantidad acumulada de todas las interacciones registradas históricamente con todos los contactos.">Total Interacciones</span>
+          <span className="text-xs text-muted" title="Cantidad acumulada de todas las interacciones registradas históricamente con todos los contactos.">Total Interacciones</span>
           <div className="font-mono text-2xl mt-1">{data.totalInteractions}</div>
         </Card>
       </div>

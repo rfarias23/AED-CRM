@@ -37,11 +37,11 @@ export default function CommissionForecast() {
 
       <div className="grid grid-cols-2 gap-4">
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Suma de todos los honorarios brutos estimados del pipeline activo. Representa el ingreso máximo si se ganan todas las oportunidades.">Total Bruto</span>
+          <span className="text-xs text-muted" title="Suma de todos los honorarios brutos estimados del pipeline activo. Representa el ingreso máximo si se ganan todas las oportunidades.">Total Bruto</span>
           <div className="font-mono text-lg mt-1 text-gold-soft">USD {data.pipeline.totalGrossFees.toFixed(3)}M</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Honorarios ajustados por la probabilidad de adjudicación de cada oportunidad. Refleja el valor esperado realista de comisiones.">Total Ponderado</span>
+          <span className="text-xs text-muted" title="Honorarios ajustados por la probabilidad de adjudicación de cada oportunidad. Refleja el valor esperado realista de comisiones.">Total Ponderado</span>
           <div className="font-mono text-lg mt-1 text-green-net">USD {data.pipeline.totalWeightedFees.toFixed(3)}M</div>
         </Card>
       </div>

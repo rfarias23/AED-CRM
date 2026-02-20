@@ -56,15 +56,15 @@ export default function ConversionAnalysis() {
       {/* Win rate KPI */}
       <div className="grid grid-cols-3 gap-4">
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Porcentaje de oportunidades ganadas sobre el total de oportunidades cerradas (ganadas + perdidas). Mide la efectividad comercial global.">Tasa de Éxito</span>
+          <span className="text-xs text-muted" title="Porcentaje de oportunidades ganadas sobre el total de oportunidades cerradas (ganadas + perdidas). Mide la efectividad comercial global.">Tasa de Éxito</span>
           <div className="font-mono text-2xl mt-1 text-green-net">{formatPercent(data.overallWinRate)}</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Cantidad de oportunidades que no se adjudicaron. Sirve para analizar patrones de pérdida y mejorar la estrategia comercial.">Perdidas</span>
+          <span className="text-xs text-muted" title="Cantidad de oportunidades que no se adjudicaron. Sirve para analizar patrones de pérdida y mejorar la estrategia comercial.">Perdidas</span>
           <div className="font-mono text-2xl mt-1 text-red-soft">{data.lostCount}</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Oportunidades sin actividad reciente que no fueron cerradas formalmente. Pueden reactivarse o requieren decisión de cierre.">Dormidas</span>
+          <span className="text-xs text-muted" title="Oportunidades sin actividad reciente que no fueron cerradas formalmente. Pueden reactivarse o requieren decisión de cierre.">Dormidas</span>
           <div className="font-mono text-2xl mt-1">{data.dormantCount}</div>
         </Card>
       </div>
@@ -82,7 +82,7 @@ export default function ConversionAnalysis() {
                 <div className="flex-1 bg-cream rounded-full h-4 overflow-hidden">
                   <div className="bg-accent h-full rounded-full transition-all flex items-center justify-end pr-2"
                     style={{ width: `${Math.max(pct, 10)}%` }}>
-                    <span className="text-[10px] text-white font-mono">{s.count}</span>
+                    <span className="text-[10px] text-ink font-mono">{s.count}</span>
                   </div>
                 </div>
                 {i < data.conversions.length && (

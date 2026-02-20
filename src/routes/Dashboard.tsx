@@ -149,25 +149,25 @@ export default function Dashboard() {
 
         {/* Temperature / Intensity Pulse */}
         <Card dark>
-          <h3 className="text-xs font-medium text-white/60 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <h3 className="text-xs font-medium text-muted uppercase tracking-wider mb-4 flex items-center gap-2">
             <Thermometer className="w-4 h-4" /> Pulso de Intensidad
           </h3>
           <div className="space-y-3">
             {(['hot', 'warm', 'cool', 'cold', 'dormant'] as const).map((temp) => (
               <div key={temp} className="flex items-center justify-between">
                 <TemperatureDot temperature={temp} showLabel />
-                <span className="font-mono text-sm text-white">{stats.tempCounts[temp]}</span>
+                <span className="font-mono text-sm text-ink">{stats.tempCounts[temp]}</span>
               </div>
             ))}
           </div>
           {stats.coldAlerts.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-white/10">
-              <p className="text-xs text-white/50 flex items-center gap-1 mb-2">
+            <div className="mt-4 pt-4 border-t border-border">
+              <p className="text-xs text-muted flex items-center gap-1 mb-2">
                 <AlertTriangle className="w-3 h-3" /> Alertas frías
               </p>
               {stats.coldAlerts.map((o) => (
                 <Link key={o.id} to={`/opportunities/${o.id}`}
-                  className="block text-xs text-white/70 hover:text-white truncate py-0.5">
+                  className="block text-xs text-ink/70 hover:text-accent truncate py-0.5">
                   {o.name}
                 </Link>
               ))}

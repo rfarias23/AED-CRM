@@ -25,7 +25,7 @@ export default function Card({
     <div
       className={`rounded-lg border shadow-sm ${PADDING[padding]} ${
         dark
-          ? 'bg-ink text-white border-transparent'
+          ? 'bg-white border-accent text-ink'
           : 'bg-white border-border'
       } ${className}`}
       title={title}

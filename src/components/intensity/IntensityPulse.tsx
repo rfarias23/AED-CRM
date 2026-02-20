@@ -75,7 +75,7 @@ export default function IntensityPulse() {
     <Card dark>
       <div className="flex items-center gap-2 mb-4">
         <Activity className="w-5 h-5 text-gold" />
-        <h3 className="text-sm font-medium text-white/80 uppercase tracking-wider">Pulso de Intensidad</h3>
+        <h3 className="text-sm font-medium text-ink/80 uppercase tracking-wider">Pulso de Intensidad</h3>
         <span className={`ml-auto text-sm font-semibold ${healthColors[data.health]}`}>
           {healthLabels[data.health]}
         </span>
@@ -93,20 +93,20 @@ export default function IntensityPulse() {
           <div key={item.id} className="flex items-center gap-1.5 bg-white/5 rounded px-2 py-1">
             <TemperatureDot temperature={item.temp} />
             <CountryFlag code={item.country} size="sm" />
-            <span className="text-xs text-white/70 truncate max-w-[100px]">{item.name}</span>
+            <span className="text-xs text-ink/70 truncate max-w-[100px]">{item.name}</span>
           </div>
         ))}
       </div>
 
       {/* Cold alerts */}
       {data.coldAlerts.length > 0 && (
-        <div className="border-t border-white/10 pt-3">
+        <div className="border-t border-border pt-3">
           <div className="flex items-center gap-1.5 mb-2">
             <AlertTriangle className="w-3.5 h-3.5 text-gold" />
-            <span className="text-xs text-white/60 uppercase tracking-wider">Alertas</span>
+            <span className="text-xs text-muted uppercase tracking-wider">Alertas</span>
           </div>
           {data.coldAlerts.map((item) => (
-            <div key={item.id} className="flex items-center gap-2 text-xs text-white/70 py-0.5">
+            <div key={item.id} className="flex items-center gap-2 text-xs text-ink/70 py-0.5">
               <TemperatureDot temperature={item.temp} />
               <span>{item.name}</span>
             </div>
@@ -124,8 +124,8 @@ function ProgressBar({ label, current, target }: { label: string; current: numbe
   return (
     <div>
       <div className="flex justify-between text-xs mb-1">
-        <span className="text-white/60">{label}</span>
-        <span className="text-white/80 font-mono">
+        <span className="text-muted">{label}</span>
+        <span className="text-ink/80 font-mono">
           {current}/{target}
         </span>
       </div>

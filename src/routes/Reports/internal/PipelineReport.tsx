@@ -57,15 +57,15 @@ export default function PipelineReport() {
       {/* Summary */}
       <div className="grid grid-cols-3 gap-4">
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Suma total de honorarios brutos estimados de todas las oportunidades activas. Representa el ingreso máximo potencial si se ganaran todas.">Comisiones Brutas</span>
+          <span className="text-xs text-muted" title="Suma total de honorarios brutos estimados de todas las oportunidades activas. Representa el ingreso máximo potencial si se ganaran todas.">Comisiones Brutas</span>
           <div className="font-mono text-lg mt-1">USD {data.pipeline.totalGrossFees.toFixed(3)}M</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Pipeline ponderado: valor total ajustado por la probabilidad de ganar cada oportunidad. Refleja el valor esperado realista.">Comisiones Ponderadas</span>
+          <span className="text-xs text-muted" title="Pipeline ponderado: valor total ajustado por la probabilidad de ganar cada oportunidad. Refleja el valor esperado realista.">Comisiones Ponderadas</span>
           <div className="font-mono text-lg mt-1">USD {data.pipeline.totalWeightedFees.toFixed(3)}M</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-white/60" title="Cantidad de oportunidades activas en el pipeline (excluyendo ganadas, perdidas y dormidas).">Oportunidades</span>
+          <span className="text-xs text-muted" title="Cantidad de oportunidades activas en el pipeline (excluyendo ganadas, perdidas y dormidas).">Oportunidades</span>
           <div className="font-mono text-lg mt-1">{data.active.length}</div>
         </Card>
       </div>
