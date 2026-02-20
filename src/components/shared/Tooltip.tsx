@@ -12,7 +12,7 @@ export default function Tooltip({ text, children, position = 'top' }: TooltipPro
   const isTop = position === 'top'
 
   return (
-    <span className="group/tip relative inline-flex" tabIndex={0}>
+    <div className="group/tip relative" tabIndex={0}>
       {children}
       <span
         role="tooltip"
@@ -36,6 +36,6 @@ export default function Tooltip({ text, children, position = 'top' }: TooltipPro
           `}
         />
       </span>
-    </span>
+    </div>
   )
 }

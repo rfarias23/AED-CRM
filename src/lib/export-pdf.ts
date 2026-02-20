@@ -1,43 +1,33 @@
-import html2canvas from 'html2canvas'
+import { toPng } from 'html-to-image'
 import { jsPDF } from 'jspdf'
 
 /**
  * Export an HTML element to a multi-page PDF.
- * Uses html2canvas to capture the element as an image, then splits across pages.
+ * Uses html-to-image (better CSS variable support than html2canvas)
+ * then splits across A4 pages with jsPDF.
  */
 export async function exportToPDF(
   element: HTMLElement,
   filename: string,
 ): Promise<void> {
-  let canvas: HTMLCanvasElement
+  // Capture element as PNG data URL
+  const imgData = await toPng(element, {
+    pixelRatio: 2,
+    backgroundColor: '#ffffff',
+    cacheBust: true,
+  })
 
-  try {
-    // Try scale 2 first (high-quality)
-    canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#ffffff',
-    })
-  } catch {
-    // Fallback to scale 1 if canvas is too large (OOM on big reports)
-    console.warn('html2canvas failed at scale 2, retrying at scale 1')
-    try {
-      canvas = await html2canvas(element, {
-        scale: 1,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-      })
-    } catch (err) {
-      throw new Error(`Error generando PDF: el reporte es demasiado grande para capturar. ${err instanceof Error ? err.message : err}`)
-    }
-  }
+  // Load image to get natural dimensions
+  const img = new Image()
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve()
+    img.onerror = () => reject(new Error('Error cargando imagen del reporte'))
+    img.src = imgData
+  })
 
-  const imgData = canvas.toDataURL('image/png')
   const imgWidth = 210 // A4 width in mm
   const pageHeight = 297 // A4 height in mm
-  const imgHeight = (canvas.height * imgWidth) / canvas.width
+  const imgHeight = (img.naturalHeight * imgWidth) / img.naturalWidth
 
   const pdf = new jsPDF('p', 'mm', 'a4')
   let heightLeft = imgHeight

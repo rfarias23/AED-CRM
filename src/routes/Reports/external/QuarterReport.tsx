@@ -53,6 +53,9 @@ export default function QuarterReport() {
     setExporting(true)
     try {
       await exportToPDF(reportRef.current, `Reporte_Trimestral_ASCH_${new Date().toISOString().slice(0, 10)}`)
+    } catch (err) {
+      console.error('PDF export failed:', err)
+      alert('Error al exportar PDF. Intenta usar "Imprimir" como alternativa.')
     } finally {
       setExporting(false)
     }
