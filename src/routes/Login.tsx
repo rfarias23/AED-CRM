@@ -6,7 +6,7 @@
 import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
-import { Building2, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function Login() {
   const { user, loading, login, resetPassword } = useAuth()
@@ -79,11 +79,9 @@ export default function Login() {
       <div className="w-full max-w-sm">
         {/* Logo / Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-accent rounded-2xl mb-4">
-            <Building2 className="w-7 h-7 text-white" />
-          </div>
-          <h1 className="font-heading text-2xl text-ink">FyF Public Relations</h1>
-          <p className="text-muted text-sm mt-1">Management Center</p>
+          <h1 className="font-heading text-4xl text-ink tracking-tight">FyF</h1>
+          <div className="w-16 h-px bg-accent mx-auto my-3" />
+          <p className="text-sm text-muted uppercase tracking-[0.25em] font-medium">Public Relations</p>
         </div>
 
         {/* Card */}
