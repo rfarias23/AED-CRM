@@ -1,7 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useEffect } from 'react'
 import ErrorBoundary from './components/shared/ErrorBoundary'
+import { AuthProvider } from './contexts/AuthContext'
+import ProtectedRoute from './components/auth/ProtectedRoute'
+import AdminRoute from './components/auth/AdminRoute'
 import PageShell from './components/layout/PageShell'
+import Login from './routes/Login'
 import Dashboard from './routes/Dashboard'
 import FeeCalculator from './routes/FeeCalculator'
 import Opportunities from './routes/Opportunities'
@@ -15,6 +19,7 @@ import ExpenseForm from './routes/Expenses/ExpenseForm'
 import CommercialPlan from './routes/CommercialPlan'
 import Reports from './routes/Reports'
 import Settings from './routes/Settings'
+import TeamManagement from './routes/TeamManagement'
 import { seedIfEmpty } from './lib/db'
 import { useSettingsStore } from './stores/useSettingsStore'
 import { useCurrencyStore } from './stores/useCurrencyStore'
@@ -34,28 +39,41 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<PageShell />}>
-            <Route index element={<Dashboard />} />
-            <Route path="calculator" element={<FeeCalculator />} />
-            <Route path="opportunities" element={<Opportunities />} />
-            <Route path="opportunities/new" element={<OpportunityForm />} />
-            <Route path="opportunities/:id" element={<OpportunityDetail />} />
-            <Route path="opportunities/:id/edit" element={<OpportunityForm />} />
-            <Route path="contacts" element={<Contacts />} />
-            <Route path="contacts/new" element={<ContactForm />} />
-            <Route path="contacts/:id" element={<ContactDetail />} />
-            <Route path="contacts/:id/edit" element={<ContactForm />} />
-            <Route path="expenses" element={<Expenses />} />
-            <Route path="expenses/new" element={<ExpenseForm />} />
-            <Route path="expenses/:id/edit" element={<ExpenseForm />} />
-            <Route path="plan" element={<CommercialPlan />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public route */}
+            <Route path="/login" element={<Login />} />
+
+            {/* Protected routes — require authentication */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<PageShell />}>
+                <Route index element={<Dashboard />} />
+                <Route path="calculator" element={<FeeCalculator />} />
+                <Route path="opportunities" element={<Opportunities />} />
+                <Route path="opportunities/new" element={<OpportunityForm />} />
+                <Route path="opportunities/:id" element={<OpportunityDetail />} />
+                <Route path="opportunities/:id/edit" element={<OpportunityForm />} />
+                <Route path="contacts" element={<Contacts />} />
+                <Route path="contacts/new" element={<ContactForm />} />
+                <Route path="contacts/:id" element={<ContactDetail />} />
+                <Route path="contacts/:id/edit" element={<ContactForm />} />
+                <Route path="expenses" element={<Expenses />} />
+                <Route path="expenses/new" element={<ExpenseForm />} />
+                <Route path="expenses/:id/edit" element={<ExpenseForm />} />
+                <Route path="plan" element={<CommercialPlan />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="settings" element={<Settings />} />
+
+                {/* Admin-only routes */}
+                <Route element={<AdminRoute />}>
+                  <Route path="team" element={<TeamManagement />} />
+                </Route>
+              </Route>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </ErrorBoundary>
   )
 }

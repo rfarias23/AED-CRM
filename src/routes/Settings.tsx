@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
+import { useAuth } from '@/contexts/AuthContext'
 import Card from '@/components/shared/Card'
 import CountryFlag from '@/components/shared/CountryFlag'
 import { Settings as SettingsIcon, Globe, DollarSign, Percent, Activity, User, Database } from 'lucide-react'
@@ -389,6 +390,8 @@ function ProfileTab() {
 
 // ── Data (Backup/Restore/Export) ────────────────
 function DataTab() {
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'admin'
   const [status, setStatus] = useState('')
 
   async function handleExportJSON() {
@@ -431,10 +434,16 @@ function DataTab() {
             className="px-4 py-2 bg-accent text-white rounded-lg text-sm font-medium hover:bg-accent/90">
             Exportar JSON
           </button>
-          <button onClick={handleImportJSON}
-            className="px-4 py-2 border border-border rounded-lg text-sm font-medium hover:bg-cream">
-            Importar JSON
-          </button>
+          {isAdmin ? (
+            <button onClick={handleImportJSON}
+              className="px-4 py-2 border border-border rounded-lg text-sm font-medium hover:bg-cream">
+              Importar JSON
+            </button>
+          ) : (
+            <span className="px-4 py-2 text-sm text-muted italic">
+              Solo admin puede importar datos
+            </span>
+          )}
         </div>
         {status && <p className="text-sm text-muted mt-3">{status}</p>}
       </Card>

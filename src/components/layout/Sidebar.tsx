@@ -11,8 +11,11 @@ import {
   PanelLeftClose,
   PanelLeft,
   X,
+  UsersRound,
+  LogOut,
 } from 'lucide-react'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import { useAuth } from '@/contexts/AuthContext'
 
 const NAV_ITEMS = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -25,11 +28,19 @@ const NAV_ITEMS = [
   { to: '/settings', icon: Settings, label: 'Configuración' },
 ]
 
+// Admin-only nav items
+const ADMIN_NAV_ITEMS = [
+  { to: '/team', icon: UsersRound, label: 'Equipo' },
+]
+
 export default function Sidebar() {
   const collapsed = useSettingsStore((s) => s.sidebarCollapsed)
   const mobileOpen = useSettingsStore((s) => s.mobileSidebarOpen)
   const toggle = useSettingsStore((s) => s.toggleSidebar)
   const closeMobile = useSettingsStore((s) => s.closeMobileSidebar)
+  const { user, logout } = useAuth()
+
+  const isAdmin = user?.role === 'admin'
 
   return (
     <>
@@ -103,14 +114,56 @@ export default function Sidebar() {
               )}
             </NavLink>
           ))}
+
+          {/* Admin-only section */}
+          {isAdmin && (
+            <>
+              {(!collapsed || mobileOpen) && (
+                <div className="mx-4 my-3 border-t border-white/10" />
+              )}
+              {ADMIN_NAV_ITEMS.map(({ to, icon: Icon, label }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  onClick={closeMobile}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-accent text-white'
+                        : 'text-white/70 hover:text-white hover:bg-white/5'
+                    } ${collapsed && !mobileOpen ? 'justify-center' : ''}`
+                  }
+                >
+                  <Icon className="w-5 h-5 shrink-0" />
+                  {(!collapsed || mobileOpen) && (
+                    <span className="text-sm font-medium">{label}</span>
+                  )}
+                </NavLink>
+              ))}
+            </>
+          )}
         </nav>
 
-        {/* Footer */}
-        {(!collapsed || mobileOpen) && (
-          <div className="px-4 py-3 border-t border-white/10 text-xs text-white/40">
-            Command Center v1.0
-          </div>
-        )}
+        {/* Footer — user info + logout */}
+        <div className="border-t border-white/10">
+          {(!collapsed || mobileOpen) && user && (
+            <div className="px-4 py-2 text-xs text-white/50 truncate">
+              {user.displayName || user.email}
+            </div>
+          )}
+          <button
+            onClick={logout}
+            className={`flex items-center gap-3 w-full px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 transition-colors ${
+              collapsed && !mobileOpen ? 'justify-center' : ''
+            }`}
+            title="Cerrar sesión"
+          >
+            <LogOut className="w-4 h-4 shrink-0" />
+            {(!collapsed || mobileOpen) && (
+              <span className="text-sm">Cerrar sesión</span>
+            )}
+          </button>
+        </div>
       </aside>
     </>
   )
