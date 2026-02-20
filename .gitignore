@@ -26,6 +26,9 @@ dist-ssr
 # OS files
 Thumbs.db
 
+# Firebase
+.firebase
+
 # Environment
 .env
 .env.local
