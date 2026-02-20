@@ -1,0 +1,92 @@
+/*
+ * Print styles — AEC Pipeline Command Center
+ * Applied via @media print. Hides navigation, optimizes for paper.
+ */
+
+@media print {
+  /* Hide non-print elements */
+  nav,
+  aside,
+  header,
+  button,
+  [data-no-print],
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset backgrounds for paper */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  /* Full width content */
+  #root,
+  main,
+  [data-print-full] {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Keep monetary values in mono */
+  .font-mono,
+  [data-money] {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 10pt;
+  }
+
+  /* Page breaks */
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  .no-page-break {
+    page-break-inside: avoid;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th, td {
+    border: 1px solid #d5d0c5;
+    padding: 4px 8px;
+    text-align: left;
+  }
+
+  th {
+    background: #eee9df !important;
+    font-weight: 600;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* KPI cards for print */
+  [data-kpi] {
+    border: 1px solid #d5d0c5;
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+
+  /* Links: show URL */
+  a[href]:after {
+    content: ' (' attr(href) ')';
+    font-size: 9pt;
+    color: #7a7568;
+  }
+
+  a[href^="#"]:after,
+  a[href^="javascript"]:after {
+    content: '';
+  }
+}
