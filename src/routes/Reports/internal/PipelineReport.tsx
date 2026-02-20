@@ -6,6 +6,7 @@ import Card from '@/components/shared/Card'
 import { StageBadge } from '@/components/shared/Badge'
 import MoneyDisplay from '@/components/shared/MoneyDisplay'
 import CountryFlag from '@/components/shared/CountryFlag'
+import Tooltip from '@/components/shared/Tooltip'
 import { formatPercent } from '@/lib/formatters'
 import type { OpportunityStage } from '@/lib/types'
 
@@ -57,15 +58,15 @@ export default function PipelineReport() {
       {/* Summary */}
       <div className="grid grid-cols-3 gap-4">
         <Card dark padding="sm">
-          <span className="text-xs text-muted" title="Suma total de honorarios brutos estimados de todas las oportunidades activas. Representa el ingreso máximo potencial si se ganaran todas.">Comisiones Brutas</span>
+          <Tooltip text="Suma total de honorarios brutos estimados de todas las oportunidades activas. Representa el ingreso máximo potencial si se ganaran todas."><span className="text-xs text-muted">Comisiones Brutas</span></Tooltip>
           <div className="font-mono text-lg mt-1">USD {data.pipeline.totalGrossFees.toFixed(3)}M</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-muted" title="Pipeline ponderado: valor total ajustado por la probabilidad de ganar cada oportunidad. Refleja el valor esperado realista.">Comisiones Ponderadas</span>
+          <Tooltip text="Pipeline ponderado: valor total ajustado por la probabilidad de ganar cada oportunidad. Refleja el valor esperado realista."><span className="text-xs text-muted">Comisiones Ponderadas</span></Tooltip>
           <div className="font-mono text-lg mt-1">USD {data.pipeline.totalWeightedFees.toFixed(3)}M</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-muted" title="Cantidad de oportunidades activas en el pipeline (excluyendo ganadas, perdidas y dormidas).">Oportunidades</span>
+          <Tooltip text="Cantidad de oportunidades activas en el pipeline (excluyendo ganadas, perdidas y dormidas)."><span className="text-xs text-muted">Oportunidades</span></Tooltip>
           <div className="font-mono text-lg mt-1">{data.active.length}</div>
         </Card>
       </div>
@@ -75,8 +76,8 @@ export default function PipelineReport() {
         <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Por País</h3>
         <table className="w-full text-sm">
           <thead><tr className="text-left text-muted">
-            <th className="pb-2" title="País donde se ubica la oportunidad.">País</th><th className="pb-2" title="Número de oportunidades activas en este país.">Opp.</th>
-            <th className="pb-2 text-right" title="Valor total ASCH en USD de las oportunidades en este país.">Valor</th><th className="pb-2 text-right" title="Comisiones brutas estimadas por las oportunidades de este país.">Fees</th>
+            <th className="pb-2"><Tooltip text="País donde se ubica la oportunidad."><span>País</span></Tooltip></th><th className="pb-2"><Tooltip text="Número de oportunidades activas en este país."><span>Opp.</span></Tooltip></th>
+            <th className="pb-2 text-right"><Tooltip text="Valor total ASCH en USD de las oportunidades en este país."><span>Valor</span></Tooltip></th><th className="pb-2 text-right"><Tooltip text="Comisiones brutas estimadas por las oportunidades de este país."><span>Fees</span></Tooltip></th>
           </tr></thead>
           <tbody>
             {data.byCountry.map(([code, v]) => (
@@ -97,9 +98,9 @@ export default function PipelineReport() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead><tr className="text-left text-muted">
-              <th className="pb-2" title="Nombre del proyecto u oportunidad comercial.">Proyecto</th><th className="pb-2" title="Fase actual de la oportunidad en el pipeline comercial.">Etapa</th>
-              <th className="pb-2 text-right" title="Valor del contrato ASCH en dólares estadounidenses.">ASCH USD</th><th className="pb-2 text-right" title="Probabilidad de Adjudicación: estimación porcentual de ganar esta oportunidad.">PoA</th>
-              <th className="pb-2 text-right" title="Tasa efectiva de comisión aplicada según la estructura de fees correspondiente.">Tasa Fee</th><th className="pb-2 text-right" title="Honorario bruto estimado antes de retenciones o impuestos.">Fee Bruto</th>
+              <th className="pb-2"><Tooltip text="Nombre del proyecto u oportunidad comercial."><span>Proyecto</span></Tooltip></th><th className="pb-2"><Tooltip text="Fase actual de la oportunidad en el pipeline comercial."><span>Etapa</span></Tooltip></th>
+              <th className="pb-2 text-right"><Tooltip text="Valor del contrato ASCH en dólares estadounidenses."><span>ASCH USD</span></Tooltip></th><th className="pb-2 text-right"><Tooltip text="Probabilidad de Adjudicación: estimación porcentual de ganar esta oportunidad."><span>PoA</span></Tooltip></th>
+              <th className="pb-2 text-right"><Tooltip text="Tasa efectiva de comisión aplicada según la estructura de fees correspondiente."><span>Tasa Fee</span></Tooltip></th><th className="pb-2 text-right"><Tooltip text="Honorario bruto estimado antes de retenciones o impuestos."><span>Fee Bruto</span></Tooltip></th>
             </tr></thead>
             <tbody>
               {data.pipeline.byOpportunity.map((item) => (

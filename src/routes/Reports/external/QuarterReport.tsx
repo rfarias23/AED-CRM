@@ -6,6 +6,7 @@ import Card from '@/components/shared/Card'
 import { StageBadge } from '@/components/shared/Badge'
 import MoneyDisplay from '@/components/shared/MoneyDisplay'
 import CountryFlag from '@/components/shared/CountryFlag'
+import Tooltip from '@/components/shared/Tooltip'
 import { formatPercent } from '@/lib/formatters'
 import { exportToPDF } from '@/lib/export-pdf'
 import { FileDown, Printer } from 'lucide-react'
@@ -93,15 +94,15 @@ export default function QuarterReport() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-muted">
-                  <th className="pb-2" title="Indicador clave de rendimiento evaluado.">Métrica</th>
-                  <th className="pb-2 text-right" title="Valor objetivo definido en el plan trimestral.">Planificado</th>
-                  <th className="pb-2 text-right" title="Valor real alcanzado al momento del reporte.">Actual</th>
-                  <th className="pb-2 text-right" title="Porcentaje de avance del valor actual respecto al planificado.">Cumplimiento</th>
+                  <th className="pb-2"><Tooltip text="Indicador clave de rendimiento evaluado."><span>Métrica</span></Tooltip></th>
+                  <th className="pb-2 text-right"><Tooltip text="Valor objetivo definido en el plan trimestral."><span>Planificado</span></Tooltip></th>
+                  <th className="pb-2 text-right"><Tooltip text="Valor real alcanzado al momento del reporte."><span>Actual</span></Tooltip></th>
+                  <th className="pb-2 text-right"><Tooltip text="Porcentaje de avance del valor actual respecto al planificado."><span>Cumplimiento</span></Tooltip></th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-t border-border">
-                  <td className="py-2" title="Valor total bruto de todas las oportunidades activas en el pipeline, expresado en millones de USD.">Pipeline (USD M)</td>
+                  <td className="py-2"><Tooltip text="Valor total bruto de todas las oportunidades activas en el pipeline, expresado en millones de USD."><span>Pipeline (USD M)</span></Tooltip></td>
                   <td className="py-2 text-right font-mono">{activePlan.targetPipelineUSD ?? activePlan.pipelineBrutoUSD}</td>
                   <td className="py-2 text-right font-mono">{(data.pipelineTotal / 1e6).toFixed(1)}</td>
                   <td className="py-2 text-right font-mono">
@@ -111,7 +112,7 @@ export default function QuarterReport() {
                   </td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2" title="Valor acumulado de oportunidades adjudicadas (ganadas) en el trimestre, en millones de USD.">Ganado (USD M)</td>
+                  <td className="py-2"><Tooltip text="Valor acumulado de oportunidades adjudicadas (ganadas) en el trimestre, en millones de USD."><span>Ganado (USD M)</span></Tooltip></td>
                   <td className="py-2 text-right font-mono">{activePlan.targetWonUSD ?? activePlan.wonUSD}</td>
                   <td className="py-2 text-right font-mono">{(data.wonTotal / 1e6).toFixed(1)}</td>
                   <td className="py-2 text-right font-mono">
@@ -121,7 +122,7 @@ export default function QuarterReport() {
                   </td>
                 </tr>
                 <tr className="border-t border-border">
-                  <td className="py-2" title="Suma de honorarios brutos devengados por las oportunidades del pipeline, en millones de USD.">Fees Bruto (USD M)</td>
+                  <td className="py-2"><Tooltip text="Suma de honorarios brutos devengados por las oportunidades del pipeline, en millones de USD."><span>Fees Bruto (USD M)</span></Tooltip></td>
                   <td className="py-2 text-right font-mono">{activePlan.targetFeesUSD ?? activePlan.feesDevengadosUSD}</td>
                   <td className="py-2 text-right font-mono">{data.pipeline.totalGrossFees.toFixed(3)}</td>
                   <td className="py-2 text-right font-mono">
@@ -141,19 +142,19 @@ export default function QuarterReport() {
           <div className="grid grid-cols-4 gap-4 mb-4">
             <div className="text-center">
               <div className="font-mono text-2xl">{data.active.length}</div>
-              <div className="text-xs text-muted" title="Oportunidades actualmente en proceso en el pipeline (identificación hasta negociación).">Activas</div>
+              <Tooltip text="Oportunidades actualmente en proceso en el pipeline (identificación hasta negociación)."><div className="text-xs text-muted">Activas</div></Tooltip>
             </div>
             <div className="text-center">
               <div className="font-mono text-2xl text-green-net">{data.won.length}</div>
-              <div className="text-xs text-muted" title="Oportunidades adjudicadas exitosamente en el periodo.">Ganadas</div>
+              <Tooltip text="Oportunidades adjudicadas exitosamente en el periodo."><div className="text-xs text-muted">Ganadas</div></Tooltip>
             </div>
             <div className="text-center">
               <div className="font-mono text-2xl text-red-soft">{data.lost.length}</div>
-              <div className="text-xs text-muted" title="Oportunidades que no se adjudicaron en el periodo.">Perdidas</div>
+              <Tooltip text="Oportunidades que no se adjudicaron en el periodo."><div className="text-xs text-muted">Perdidas</div></Tooltip>
             </div>
             <div className="text-center">
               <div className="font-mono text-2xl">{opportunities.length}</div>
-              <div className="text-xs text-muted" title="Número total de oportunidades gestionadas, incluyendo activas, ganadas, perdidas y dormidas.">Total</div>
+              <Tooltip text="Número total de oportunidades gestionadas, incluyendo activas, ganadas, perdidas y dormidas."><div className="text-xs text-muted">Total</div></Tooltip>
             </div>
           </div>
 
@@ -161,11 +162,11 @@ export default function QuarterReport() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-muted">
-                  <th className="pb-2" title="Nombre del proyecto u oportunidad comercial.">Proyecto</th>
-                  <th className="pb-2" title="País donde se ubica la oportunidad.">País</th>
-                  <th className="pb-2" title="Fase actual de la oportunidad en el pipeline comercial.">Etapa</th>
-                  <th className="pb-2 text-right" title="Valor del contrato ASCH en dólares estadounidenses.">Valor ASCH</th>
-                  <th className="pb-2 text-right" title="Probabilidad de Adjudicación: estimación porcentual de ganar esta oportunidad.">PoA</th>
+                  <th className="pb-2"><Tooltip text="Nombre del proyecto u oportunidad comercial."><span>Proyecto</span></Tooltip></th>
+                  <th className="pb-2"><Tooltip text="País donde se ubica la oportunidad."><span>País</span></Tooltip></th>
+                  <th className="pb-2"><Tooltip text="Fase actual de la oportunidad en el pipeline comercial."><span>Etapa</span></Tooltip></th>
+                  <th className="pb-2 text-right"><Tooltip text="Valor del contrato ASCH en dólares estadounidenses."><span>Valor ASCH</span></Tooltip></th>
+                  <th className="pb-2 text-right"><Tooltip text="Probabilidad de Adjudicación: estimación porcentual de ganar esta oportunidad."><span>PoA</span></Tooltip></th>
                 </tr>
               </thead>
               <tbody>
@@ -198,9 +199,9 @@ export default function QuarterReport() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-muted">
-                <th className="pb-2" title="País donde se ubican las oportunidades.">País</th>
-                <th className="pb-2 text-right" title="Cantidad de oportunidades activas en este país.">Oportunidades</th>
-                <th className="pb-2 text-right" title="Valor total del pipeline en USD para este país.">Valor Pipeline</th>
+                <th className="pb-2"><Tooltip text="País donde se ubican las oportunidades."><span>País</span></Tooltip></th>
+                <th className="pb-2 text-right"><Tooltip text="Cantidad de oportunidades activas en este país."><span>Oportunidades</span></Tooltip></th>
+                <th className="pb-2 text-right"><Tooltip text="Valor total del pipeline en USD para este país."><span>Valor Pipeline</span></Tooltip></th>
               </tr>
             </thead>
             <tbody>
@@ -221,10 +222,10 @@ export default function QuarterReport() {
 
         {/* Expense Summary */}
         <Card>
-          <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3" title="Resumen del gasto operacional del trimestre asociado a la actividad comercial.">Resumen de Gastos</h3>
-          <div className="font-mono text-xl mb-2" title="Suma total de todos los gastos registrados en el periodo, convertidos a USD.">
+          <Tooltip text="Resumen del gasto operacional del trimestre asociado a la actividad comercial."><h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Resumen de Gastos</h3></Tooltip>
+          <Tooltip text="Suma total de todos los gastos registrados en el periodo, convertidos a USD."><div className="font-mono text-xl mb-2">
             Total: ${data.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </div>
+          </div></Tooltip>
           <p className="text-xs text-muted">Detalle disponible en el Reporte de Gastos dedicado.</p>
         </Card>
       </div>

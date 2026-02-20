@@ -5,6 +5,7 @@ import { getTemperature } from '@/components/pipeline/temperature'
 import Card from '@/components/shared/Card'
 import { TemperatureDot } from '@/components/shared/Badge'
 import CountryFlag from '@/components/shared/CountryFlag'
+import Tooltip from '@/components/shared/Tooltip'
 import { formatRelativeDate } from '@/lib/formatters'
 import { AlertTriangle, Shield } from 'lucide-react'
 import type { OpportunityStage, Temperature } from '@/lib/types'
@@ -77,29 +78,29 @@ export default function IntensityReport() {
       {/* Activity KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card dark padding="sm">
-          <span className="text-xs text-muted" title="Número total de interacciones registradas en los últimos 7 días. Mide el ritmo de actividad comercial semanal.">Interacciones/Sem</span>
+          <Tooltip text="Número total de interacciones registradas en los últimos 7 días. Mide el ritmo de actividad comercial semanal."><span className="text-xs text-muted">Interacciones/Sem</span></Tooltip>
           <div className="font-mono text-2xl mt-1">{data.weeklyInteractions}</div>
           <span className="text-xs text-muted/70">Objetivo: {config?.benchmarks.interactionsPerWeek ?? 8}</span>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-muted" title="Reuniones presenciales, presentaciones y visitas de sitio realizadas esta semana. Las reuniones son las interacciones de mayor impacto comercial.">Reuniones/Sem</span>
+          <Tooltip text="Reuniones presenciales, presentaciones y visitas de sitio realizadas esta semana. Las reuniones son las interacciones de mayor impacto comercial."><span className="text-xs text-muted">Reuniones/Sem</span></Tooltip>
           <div className="font-mono text-2xl mt-1">{data.weeklyMeetings}</div>
           <span className="text-xs text-muted/70">Objetivo: {config?.benchmarks.meetingsPerWeek ?? 3}</span>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-muted" title="Porcentaje de interacciones semanales calificadas como alta calidad. Refleja la profundidad y relevancia de las conversaciones comerciales.">% Alta Calidad</span>
+          <Tooltip text="Porcentaje de interacciones semanales calificadas como alta calidad. Refleja la profundidad y relevancia de las conversaciones comerciales."><span className="text-xs text-muted">% Alta Calidad</span></Tooltip>
           <div className="font-mono text-2xl mt-1">{(data.highQualityPct * 100).toFixed(0)}%</div>
           <span className="text-xs text-muted/70">Objetivo: {((config?.benchmarks.highQualityPctTarget ?? 0.4) * 100).toFixed(0)}%</span>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-muted" title="Cantidad acumulada de todas las interacciones registradas históricamente con todos los contactos.">Total Interacciones</span>
+          <Tooltip text="Cantidad acumulada de todas las interacciones registradas históricamente con todos los contactos."><span className="text-xs text-muted">Total Interacciones</span></Tooltip>
           <div className="font-mono text-2xl mt-1">{data.totalInteractions}</div>
         </Card>
       </div>
 
       {/* Temperature heatmap */}
       <Card>
-        <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3" title="Indicador visual de la actividad reciente de cada oportunidad. Las temperaturas frías o dormidas señalan oportunidades que requieren atención inmediata.">Mapa de Temperatura</h3>
+        <Tooltip text="Indicador visual de la actividad reciente de cada oportunidad. Las temperaturas frías o dormidas señalan oportunidades que requieren atención inmediata."><h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Mapa de Temperatura</h3></Tooltip>
         <div className="space-y-2">
           {data.tempMap.map((item) => (
             <div key={item.id} className="flex items-center gap-3 text-sm py-1.5 border-b border-border last:border-0">
@@ -114,7 +115,7 @@ export default function IntensityReport() {
 
       {/* Interaction types */}
       <Card>
-        <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3" title="Desglose de interacciones por tipo (reunión, email, llamada, etc.). Permite evaluar si el mix de actividades es el adecuado para avanzar oportunidades.">Distribución de Esfuerzo</h3>
+        <Tooltip text="Desglose de interacciones por tipo (reunión, email, llamada, etc.). Permite evaluar si el mix de actividades es el adecuado para avanzar oportunidades."><h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Distribución de Esfuerzo</h3></Tooltip>
         <div className="space-y-2">
           {data.typeDistribution.map(([type, count]) => {
             const pct = data.totalInteractions > 0 ? (count / data.totalInteractions) * 100 : 0
@@ -135,7 +136,7 @@ export default function IntensityReport() {
       {data.attentionNeeded.length > 0 && (
         <Card>
           <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-gold" /> <span title="Oportunidades con temperatura fría o dormida que necesitan interacción urgente para evitar perder tracción comercial.">Requieren Atención</span>
+            <AlertTriangle className="w-4 h-4 text-gold" /> <Tooltip text="Oportunidades con temperatura fría o dormida que necesitan interacción urgente para evitar perder tracción comercial."><span>Requieren Atención</span></Tooltip>
           </h3>
           <div className="space-y-2">
             {data.attentionNeeded.map((item) => (

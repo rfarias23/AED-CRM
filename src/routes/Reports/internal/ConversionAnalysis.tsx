@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
 import Card from '@/components/shared/Card'
 import { StageBadge } from '@/components/shared/Badge'
+import Tooltip from '@/components/shared/Tooltip'
 import { formatPercent } from '@/lib/formatters'
 import type { OpportunityStage } from '@/lib/types'
 
@@ -56,22 +57,22 @@ export default function ConversionAnalysis() {
       {/* Win rate KPI */}
       <div className="grid grid-cols-3 gap-4">
         <Card dark padding="sm">
-          <span className="text-xs text-muted" title="Porcentaje de oportunidades ganadas sobre el total de oportunidades cerradas (ganadas + perdidas). Mide la efectividad comercial global.">Tasa de Éxito</span>
+          <Tooltip text="Porcentaje de oportunidades ganadas sobre el total de oportunidades cerradas (ganadas + perdidas). Mide la efectividad comercial global."><span className="text-xs text-muted">Tasa de Éxito</span></Tooltip>
           <div className="font-mono text-2xl mt-1 text-green-net">{formatPercent(data.overallWinRate)}</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-muted" title="Cantidad de oportunidades que no se adjudicaron. Sirve para analizar patrones de pérdida y mejorar la estrategia comercial.">Perdidas</span>
+          <Tooltip text="Cantidad de oportunidades que no se adjudicaron. Sirve para analizar patrones de pérdida y mejorar la estrategia comercial."><span className="text-xs text-muted">Perdidas</span></Tooltip>
           <div className="font-mono text-2xl mt-1 text-red-soft">{data.lostCount}</div>
         </Card>
         <Card dark padding="sm">
-          <span className="text-xs text-muted" title="Oportunidades sin actividad reciente que no fueron cerradas formalmente. Pueden reactivarse o requieren decisión de cierre.">Dormidas</span>
+          <Tooltip text="Oportunidades sin actividad reciente que no fueron cerradas formalmente. Pueden reactivarse o requieren decisión de cierre."><span className="text-xs text-muted">Dormidas</span></Tooltip>
           <div className="font-mono text-2xl mt-1">{data.dormantCount}</div>
         </Card>
       </div>
 
       {/* Funnel */}
       <Card>
-        <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-4" title="Visualización del flujo de oportunidades a través de cada etapa del pipeline. Muestra cuántas oportunidades avanzan entre etapas y dónde se producen las mayores caídas.">Funnel de Conversión</h3>
+        <Tooltip text="Visualización del flujo de oportunidades a través de cada etapa del pipeline. Muestra cuántas oportunidades avanzan entre etapas y dónde se producen las mayores caídas."><h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-4">Funnel de Conversión</h3></Tooltip>
         <div className="space-y-3">
           {data.stageCounts.map((s, i) => {
             const maxCount = Math.max(...data.stageCounts.map((x) => x.count), 1)
@@ -101,9 +102,9 @@ export default function ConversionAnalysis() {
         <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Tasas de Conversión</h3>
         <table className="w-full text-sm">
           <thead><tr className="text-left text-muted">
-            <th className="pb-2" title="Etapa de origen en el pipeline.">Desde</th><th className="pb-2" title="Etapa de destino a la que avanzaron las oportunidades.">Hacia</th>
-            <th className="pb-2 text-right" title="Total de oportunidades que alcanzaron o superaron la etapa de origen.">Pasaron</th><th className="pb-2 text-right" title="Oportunidades que avanzaron exitosamente a la siguiente etapa.">Convirtieron</th>
-            <th className="pb-2 text-right" title="Porcentaje de oportunidades que convirtieron de una etapa a la siguiente. Indica la eficiencia de avance en el pipeline.">Tasa</th>
+            <th className="pb-2"><Tooltip text="Etapa de origen en el pipeline."><span>Desde</span></Tooltip></th><th className="pb-2"><Tooltip text="Etapa de destino a la que avanzaron las oportunidades."><span>Hacia</span></Tooltip></th>
+            <th className="pb-2 text-right"><Tooltip text="Total de oportunidades que alcanzaron o superaron la etapa de origen."><span>Pasaron</span></Tooltip></th><th className="pb-2 text-right"><Tooltip text="Oportunidades que avanzaron exitosamente a la siguiente etapa."><span>Convirtieron</span></Tooltip></th>
+            <th className="pb-2 text-right"><Tooltip text="Porcentaje de oportunidades que convirtieron de una etapa a la siguiente. Indica la eficiencia de avance en el pipeline."><span>Tasa</span></Tooltip></th>
           </tr></thead>
           <tbody>
             {data.conversions.map((c) => (

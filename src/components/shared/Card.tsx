@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Tooltip from './Tooltip'
 
 interface CardProps {
   children: ReactNode
@@ -22,15 +23,16 @@ export default function Card({
   title,
 }: CardProps) {
   return (
-    <div
-      className={`rounded-lg border shadow-sm ${PADDING[padding]} ${
-        dark
-          ? 'bg-white border-accent text-ink'
-          : 'bg-white border-border'
-      } ${className}`}
-      title={title}
-    >
-      {children}
-    </div>
+    <Tooltip text={title}>
+      <div
+        className={`rounded-lg border shadow-sm ${PADDING[padding]} ${
+          dark
+            ? 'bg-white border-accent text-ink'
+            : 'bg-white border-border'
+        } ${className}`}
+      >
+        {children}
+      </div>
+    </Tooltip>
   )
 }

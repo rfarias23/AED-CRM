@@ -1,5 +1,6 @@
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { useAuth } from '@/contexts/AuthContext'
+import Tooltip from '@/components/shared/Tooltip'
 import type { Currency } from '@/lib/types'
 import { Menu, LogOut, Shield } from 'lucide-react'
 
@@ -57,14 +58,13 @@ export default function Header() {
                 {user.displayName || user.email}
               </span>
             </div>
-            <button
+            <Tooltip text="Cerrar sesión"><button
               onClick={logout}
               className="p-1.5 rounded-lg hover:bg-cream transition-colors text-muted hover:text-red"
               aria-label="Cerrar sesión"
-              title="Cerrar sesión"
             >
               <LogOut className="w-4 h-4" />
-            </button>
+            </button></Tooltip>
           </div>
         )}
       </div>

@@ -6,6 +6,7 @@ import DataTable from '@/components/shared/DataTable'
 import MoneyDisplay from '@/components/shared/MoneyDisplay'
 import { StatusBadge } from '@/components/shared/Badge'
 import EmptyState from '@/components/shared/EmptyState'
+import Tooltip from '@/components/shared/Tooltip'
 import { formatDate } from '@/lib/formatters'
 import type { Expense, ExpenseType } from '@/lib/types'
 import CountryFlag from '@/components/shared/CountryFlag'
@@ -57,13 +58,13 @@ const columns = [
     ),
   }),
   col.accessor('amountOriginal', {
-    header: () => <span title="Valor original del gasto en la moneda local de la transacción.">Monto</span>,
+    header: () => <Tooltip text="Valor original del gasto en la moneda local de la transacción."><span>Monto</span></Tooltip>,
     cell: (info) => (
       <MoneyDisplay amount={info.getValue()} currency={info.row.original.currency} compact />
     ),
   }),
   col.accessor('amountUSD', {
-    header: () => <span title="Equivalente en dólares estadounidenses, convertido al tipo de cambio del momento.">USD</span>,
+    header: () => <Tooltip text="Equivalente en dólares estadounidenses, convertido al tipo de cambio del momento."><span>USD</span></Tooltip>,
     cell: (info) => <MoneyDisplay amount={info.getValue()} currency="USD" compact />,
   }),
 ]

@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
 import { calculateCommission } from '@/lib/commission-engine'
 import { formatPercent } from '@/lib/formatters'
+import Tooltip from '@/components/shared/Tooltip'
 import type { FeeStructure, WithholdingProfile } from '@/lib/types'
 
 interface FeeCalculatorInlineProps {
@@ -45,7 +46,7 @@ export default function FeeCalculatorInline({
   return (
     <div className={`bg-cream rounded-lg px-3 py-2 text-xs space-y-1 ${className}`}>
       <div className="flex items-center justify-between">
-        <span className="text-muted" title="Honorario bruto total calculado según los tramos de la estructura de fees, antes de retenciones.">Fee Bruto:</span>
+        <Tooltip text="Honorario bruto total calculado según los tramos de la estructura de fees, antes de retenciones."><span className="text-muted">Fee Bruto:</span></Tooltip>
         <span className="font-mono font-semibold text-accent">
           USD {result.grossFee.toFixed(4)}M
           <span className="text-muted ml-1">({formatPercent(result.effectiveRate, 2)})</span>
@@ -53,9 +54,9 @@ export default function FeeCalculatorInline({
       </div>
       {defaultWh && (
         <div className="flex items-center justify-between">
-          <span className="text-muted" title="Honorario neto después de aplicar el escenario de retención seleccionado.">
+          <Tooltip text="Honorario neto después de aplicar el escenario de retención seleccionado."><span className="text-muted">
             Neto ({defaultWh.scenario.name}):
-          </span>
+          </span></Tooltip>
           <span className="font-mono font-semibold text-green-net">
             USD {defaultWh.netFee.toFixed(4)}M
           </span>

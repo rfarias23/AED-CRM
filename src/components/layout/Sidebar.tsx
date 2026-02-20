@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { useAuth } from '@/contexts/AuthContext'
+import Tooltip from '@/components/shared/Tooltip'
 
 const NAV_ITEMS = [
   { to: '/', icon: LayoutDashboard, label: 'Panel' },
@@ -153,18 +154,17 @@ export default function Sidebar() {
               {user.displayName || user.email}
             </div>
           )}
-          <button
+          <Tooltip text="Cerrar sesión"><button
             onClick={logout}
             className={`flex items-center gap-3 w-full px-4 py-3 text-white/50 hover:text-white hover:bg-white/5 transition-colors ${
               collapsed && !mobileOpen ? 'justify-center' : ''
             }`}
-            title="Cerrar sesión"
           >
             <LogOut className="w-4 h-4 shrink-0" />
             {(!collapsed || mobileOpen) && (
               <span className="text-sm">Cerrar sesión</span>
             )}
-          </button>
+          </button></Tooltip>
         </div>
       </aside>
     </>

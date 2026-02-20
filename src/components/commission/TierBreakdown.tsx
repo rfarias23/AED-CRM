@@ -1,5 +1,6 @@
 import type { TierBreakdownItem } from '@/lib/types'
 import { formatPercent } from '@/lib/formatters'
+import Tooltip from '@/components/shared/Tooltip'
 
 interface TierBreakdownProps {
   tiers: TierBreakdownItem[]
@@ -35,13 +36,13 @@ export default function TierBreakdown({
             {tiers.map((item, i) => {
               const pct = dealMillions > 0 ? (item.applicableMillions / dealMillions) * 100 : 0
               return (
-                <div key={item.tier.label} className="space-y-1" title="Cada tramo aplica un porcentaje diferente según el rango de valor del contrato.">
+                <div key={item.tier.label} className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium" title="Rango de valor del contrato al que se aplica este porcentaje de fee.">{item.tier.label}</span>
+                    <Tooltip text="Rango de valor del contrato al que se aplica este porcentaje de fee."><span className="font-medium">{item.tier.label}</span></Tooltip>
                     <span className="font-mono text-xs text-muted">
-                      <span title="Porcentaje de fee que se aplica sobre el valor dentro de este tramo.">{formatPercent(item.tier.rate, 2)}</span>
+                      <Tooltip text="Porcentaje de fee que se aplica sobre el valor dentro de este tramo."><span>{formatPercent(item.tier.rate, 2)}</span></Tooltip>
                       {' × '}
-                      <span title="Monto del contrato que cae dentro de este rango específico.">USD {item.applicableMillions.toFixed(2)}M</span>
+                      <Tooltip text="Monto del contrato que cae dentro de este rango específico."><span>USD {item.applicableMillions.toFixed(2)}M</span></Tooltip>
                     </span>
                   </div>
                   <div className="h-6 bg-cream rounded overflow-hidden flex items-center">
@@ -49,9 +50,9 @@ export default function TierBreakdown({
                       className={`h-full rounded flex items-center px-2 transition-all ${TIER_COLORS[i] ?? TIER_COLORS[0]}`}
                       style={{ width: `${Math.max(pct, 2)}%` }}
                     >
-                      <span className="text-xs font-mono font-medium whitespace-nowrap" title="Honorario generado por este tramo específico.">
+                      <Tooltip text="Honorario generado por este tramo específico."><span className="text-xs font-mono font-medium whitespace-nowrap">
                         USD {item.fee.toFixed(4)}M
-                      </span>
+                      </span></Tooltip>
                     </div>
                   </div>
                 </div>
@@ -62,7 +63,7 @@ export default function TierBreakdown({
           {/* Totals */}
           <div className="border-t border-border pt-3 space-y-1">
             <div className="flex justify-between text-sm">
-              <span className="font-medium" title="Honorario bruto total calculado según los tramos de la estructura de fees, antes de retenciones.">Fee Bruto Total</span>
+              <Tooltip text="Honorario bruto total calculado según los tramos de la estructura de fees, antes de retenciones."><span className="font-medium">Fee Bruto Total</span></Tooltip>
               <span className="font-mono font-semibold text-accent">
                 USD {grossFee.toFixed(4)}M
               </span>

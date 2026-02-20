@@ -1,4 +1,5 @@
 import type { OpportunityStage, Temperature } from '@/lib/types'
+import Tooltip from './Tooltip'
 
 // ── Stage Badge ──────────────────────────────────
 
@@ -34,12 +35,13 @@ const STAGE_TOOLTIPS: Record<OpportunityStage, string> = {
 
 export function StageBadge({ stage }: { stage: OpportunityStage }) {
   return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STAGE_STYLES[stage]}`}
-      title={STAGE_TOOLTIPS[stage]}
-    >
-      {STAGE_LABELS[stage]}
-    </span>
+    <Tooltip text={STAGE_TOOLTIPS[stage]}>
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STAGE_STYLES[stage]}`}
+      >
+        {STAGE_LABELS[stage]}
+      </span>
+    </Tooltip>
   )
 }
 
@@ -69,15 +71,16 @@ export function TemperatureDot({
   showLabel?: boolean
 }) {
   return (
-    <span className="inline-flex items-center gap-1.5">
-      <span
-        className={`w-2.5 h-2.5 rounded-full ${TEMP_COLORS[temperature]}`}
-        title={TEMP_LABELS[temperature]}
-      />
-      {showLabel && (
-        <span className="text-xs text-muted">{TEMP_LABELS[temperature]}</span>
-      )}
-    </span>
+    <Tooltip text={TEMP_LABELS[temperature]}>
+      <span className="inline-flex items-center gap-1.5">
+        <span
+          className={`w-2.5 h-2.5 rounded-full ${TEMP_COLORS[temperature]}`}
+        />
+        {showLabel && (
+          <span className="text-xs text-muted">{TEMP_LABELS[temperature]}</span>
+        )}
+      </span>
+    </Tooltip>
   )
 }
 

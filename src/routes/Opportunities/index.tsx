@@ -5,6 +5,7 @@ import OpportunityList from './OpportunityList'
 import KanbanBoard from '@/components/pipeline/KanbanBoard'
 import PipelineFeesSummary from '@/components/commission/PipelineFeesSummary'
 import EmptyState from '@/components/shared/EmptyState'
+import Tooltip from '@/components/shared/Tooltip'
 import { Plus, LayoutGrid, List, Target } from 'lucide-react'
 
 type ViewMode = 'kanban' | 'list'
@@ -26,24 +27,22 @@ export default function Opportunities() {
         <div className="flex items-center gap-3">
           {/* View toggle */}
           <div className="flex bg-cream rounded-lg p-0.5">
-            <button
+            <Tooltip text="Vista Kanban"><button
               onClick={() => setView('kanban')}
               className={`p-1.5 rounded-md transition-colors ${
                 view === 'kanban' ? 'bg-white shadow-sm text-ink' : 'text-muted hover:text-ink'
               }`}
-              title="Vista Kanban"
             >
               <LayoutGrid className="w-4 h-4" />
-            </button>
-            <button
+            </button></Tooltip>
+            <Tooltip text="Vista Lista"><button
               onClick={() => setView('list')}
               className={`p-1.5 rounded-md transition-colors ${
                 view === 'list' ? 'bg-white shadow-sm text-ink' : 'text-muted hover:text-ink'
               }`}
-              title="Vista Lista"
             >
               <List className="w-4 h-4" />
-            </button>
+            </button></Tooltip>
           </div>
 
           <Link

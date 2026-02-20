@@ -7,6 +7,7 @@ import { StageBadge } from '@/components/shared/Badge'
 import CountryFlag from '@/components/shared/CountryFlag'
 import MoneyDisplay from '@/components/shared/MoneyDisplay'
 import EmptyState from '@/components/shared/EmptyState'
+import Tooltip from '@/components/shared/Tooltip'
 import type { Opportunity } from '@/lib/types'
 import { formatDate } from '@/lib/formatters'
 import { Plus, Target } from 'lucide-react'
@@ -44,7 +45,7 @@ const columns = [
   }),
   col.accessor('aschValueUSD', {
     header: () => (
-      <span title="Valor del contrato según el modelo ASCH (Alcance, Sistema, Costo, Honorarios) convertido a dólares.">ASCH USD</span>
+      <Tooltip text="Valor del contrato según el modelo ASCH (Alcance, Sistema, Costo, Honorarios) convertido a dólares."><span>ASCH USD</span></Tooltip>
     ),
     cell: (info) => (
       <MoneyDisplay amount={info.getValue()} currency="USD" compact />
@@ -52,7 +53,7 @@ const columns = [
   }),
   col.accessor('probabilityOfAward', {
     header: () => (
-      <span title="Probabilidad de Adjudicación: estimación porcentual de ganar la oportunidad basada en etapa, competencia y relación con el cliente.">PoA</span>
+      <Tooltip text="Probabilidad de Adjudicación: estimación porcentual de ganar la oportunidad basada en etapa, competencia y relación con el cliente."><span>PoA</span></Tooltip>
     ),
     cell: (info) => (
       <span className="font-mono text-sm">{(info.getValue() * 100).toFixed(0)}%</span>

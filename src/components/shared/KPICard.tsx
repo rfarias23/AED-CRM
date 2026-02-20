@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Tooltip from './Tooltip'
 
 interface KPICardProps {
   label: string
@@ -11,7 +12,8 @@ interface KPICardProps {
 
 export default function KPICard({ label, value, subtitle, icon, trend, tooltip }: KPICardProps) {
   return (
-    <div className="bg-white border border-accent rounded-lg p-5 flex flex-col gap-1 group relative" title={tooltip}>
+    <Tooltip text={tooltip}>
+      <div className="bg-white border border-accent rounded-lg p-5 flex flex-col gap-1 group relative">
       <div className="flex items-center justify-between">
         <span className="text-xs text-muted uppercase tracking-wider font-medium">
           {label}
@@ -34,5 +36,6 @@ export default function KPICard({ label, value, subtitle, icon, trend, tooltip }
         </span>
       )}
     </div>
+    </Tooltip>
   )
 }

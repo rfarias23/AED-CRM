@@ -5,6 +5,7 @@ import KPICard from '@/components/shared/KPICard'
 import { StatusBadge } from '@/components/shared/Badge'
 import EmptyState from '@/components/shared/EmptyState'
 import Modal from '@/components/shared/Modal'
+import Tooltip from '@/components/shared/Tooltip'
 import {
   Plus, Calendar, Target, CheckCircle2, TrendingUp,
   DollarSign, BarChart3, Users, AlertTriangle,
@@ -175,9 +176,9 @@ export default function QuarterPlanView() {
               {/* Stage distribution */}
               <div className="flex gap-1 text-xs">
                 {Object.entries(activePlan.pipelinePorFase).map(([stage, count]) => (
-                  <span key={stage} className="px-2 py-0.5 bg-cream rounded" title={STAGE_LABELS[stage]}>
+                  <Tooltip key={stage} text={STAGE_LABELS[stage]}><span className="px-2 py-0.5 bg-cream rounded">
                     {STAGE_LABELS[stage]}: {count}
-                  </span>
+                  </span></Tooltip>
                 ))}
               </div>
             </Card>
@@ -283,7 +284,7 @@ export default function QuarterPlanView() {
                       <span className="text-xs text-muted ml-2">{fmtM(opp.valueUSD)} — {STAGE_LABELS[opp.stage] ?? opp.stage}</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm">
-                      <span className="font-mono" title="Probabilidad de ganar">PWin: {fmtPct(opp.pWin)}</span>
+                      <Tooltip text="Probabilidad de ganar"><span className="font-mono">PWin: {fmtPct(opp.pWin)}</span></Tooltip>
                       <span className="text-xs text-muted">{opp.nextMilestone}</span>
                     </div>
                   </div>
