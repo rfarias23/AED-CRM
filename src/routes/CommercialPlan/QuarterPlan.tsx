@@ -104,22 +104,48 @@ export default function QuarterPlanView() {
     return b.year - a.year || b.quarter - a.quarter
   })
 
+  // ── Safe accessors for ASCH fields (may be undefined on legacy plans) ──
+  const p = activePlan ? {
+    pipelineBrutoUSD: activePlan.pipelineBrutoUSD ?? 0,
+    opportunidadesActivas: activePlan.opportunidadesActivas ?? 0,
+    pipelinePorFase: activePlan.pipelinePorFase ?? { identification: 0, qualification: 0, proposal: 0, negotiation: 0 },
+    opportunidadesEvaluadas: activePlan.opportunidadesEvaluadas ?? 0,
+    opportunidadesGo: activePlan.opportunidadesGo ?? 0,
+    winRateTarget: activePlan.winRateTarget ?? 0.25,
+    wonUSD: activePlan.wonUSD ?? 0,
+    lostUSD: activePlan.lostUSD ?? 0,
+    feesDevengadosUSD: activePlan.feesDevengadosUSD ?? 0,
+    feesCobradosUSD: activePlan.feesCobradosUSD ?? 0,
+    agingPromedioMeses: activePlan.agingPromedioMeses ?? 0,
+    pipelineNuevoUSD: activePlan.pipelineNuevoUSD ?? 0,
+    pipelineSalidoUSD: activePlan.pipelineSalidoUSD ?? 0,
+    velocidadPipelineMeses: activePlan.velocidadPipelineMeses ?? 0,
+    bidCostUSD: activePlan.bidCostUSD ?? 0,
+    budgetUSD: activePlan.budgetUSD ?? 0,
+    targetNewContacts: activePlan.targetNewContacts ?? 0,
+    targetInteractionsPerWeek: activePlan.targetInteractionsPerWeek ?? 8,
+    targetMeetingsPerWeek: activePlan.targetMeetingsPerWeek ?? 3,
+    reunionesDecisionMakers: activePlan.reunionesDecisionMakers ?? 0,
+    top3Oportunidades: activePlan.top3Oportunidades ?? [],
+    riesgos: activePlan.riesgos ?? [],
+  } : null
+
   // ── Computed metrics for active plan ──
-  const computed = activePlan ? {
-    dealSizePromedio: activePlan.opportunidadesActivas > 0
-      ? activePlan.pipelineBrutoUSD / activePlan.opportunidadesActivas : 0,
-    goNoGoRatio: activePlan.opportunidadesEvaluadas > 0
-      ? (activePlan.opportunidadesGo / activePlan.opportunidadesEvaluadas) : 0,
-    cobertura: activePlan.wonUSD > 0
-      ? activePlan.pipelineBrutoUSD / activePlan.wonUSD : 0,
-    tasaEfectivaFees: activePlan.wonUSD > 0
-      ? activePlan.feesDevengadosUSD / activePlan.wonUSD : 0,
-    cashConversion: activePlan.feesDevengadosUSD > 0
-      ? activePlan.feesCobradosUSD / activePlan.feesDevengadosUSD : 0,
-    pipelineHealth: activePlan.pipelineSalidoUSD > 0
-      ? activePlan.pipelineNuevoUSD / activePlan.pipelineSalidoUSD : 0,
-    bidEfficiency: activePlan.bidCostUSD > 0
-      ? activePlan.wonUSD / (activePlan.bidCostUSD / 1_000_000) : 0,
+  const computed = p ? {
+    dealSizePromedio: p.opportunidadesActivas > 0
+      ? p.pipelineBrutoUSD / p.opportunidadesActivas : 0,
+    goNoGoRatio: p.opportunidadesEvaluadas > 0
+      ? (p.opportunidadesGo / p.opportunidadesEvaluadas) : 0,
+    cobertura: p.wonUSD > 0
+      ? p.pipelineBrutoUSD / p.wonUSD : 0,
+    tasaEfectivaFees: p.wonUSD > 0
+      ? p.feesDevengadosUSD / p.wonUSD : 0,
+    cashConversion: p.feesDevengadosUSD > 0
+      ? p.feesCobradosUSD / p.feesDevengadosUSD : 0,
+    pipelineHealth: p.pipelineSalidoUSD > 0
+      ? p.pipelineNuevoUSD / p.pipelineSalidoUSD : 0,
+    bidEfficiency: p.bidCostUSD > 0
+      ? p.wonUSD / (p.bidCostUSD / 1_000_000) : 0,
   } : null
 
   function setField<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
@@ -150,7 +176,7 @@ export default function QuarterPlanView() {
       </div>
 
       {/* ── ASCH Dashboard (active plan) ── */}
-      {activePlan && computed && (
+      {activePlan && p && computed && (
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <h2 className="font-heading text-lg">Q{activePlan.quarter} {activePlan.year}</h2>
@@ -164,18 +190,18 @@ export default function QuarterPlanView() {
                 <BarChart3 className="w-4 h-4" /> Pipeline
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                <KPICard label="Pipeline Bruto" value={fmtM(activePlan.pipelineBrutoUSD)}
+                <KPICard label="Pipeline Bruto" value={fmtM(p.pipelineBrutoUSD)}
                   tooltip="Valor total no ponderado de todas las oportunidades activas en el pipeline." />
                 <KPICard label="Deal Size Prom." value={fmtM(computed.dealSizePromedio)}
                   tooltip="Tamaño promedio de cada oportunidad. Se calcula: Pipeline Bruto ÷ # Oportunidades Activas." />
-                <KPICard label="# Oportunidades" value={String(activePlan.opportunidadesActivas)}
+                <KPICard label="# Oportunidades" value={String(p.opportunidadesActivas)}
                   tooltip="Cantidad total de oportunidades activas en el pipeline este trimestre." />
-                <KPICard label="Aging Promedio" value={`${activePlan.agingPromedioMeses.toFixed(1)} meses`}
+                <KPICard label="Aging Promedio" value={`${p.agingPromedioMeses.toFixed(1)} meses`}
                   tooltip="Tiempo promedio que las oportunidades llevan en el pipeline. Un aging alto puede indicar deals estancados." />
               </div>
               {/* Stage distribution */}
               <div className="flex gap-1 text-xs">
-                {Object.entries(activePlan.pipelinePorFase).map(([stage, count]) => (
+                {Object.entries(p.pipelinePorFase).map(([stage, count]) => (
                   <Tooltip key={stage} text={STAGE_LABELS[stage]}><span className="px-2 py-0.5 bg-cream rounded">
                     {STAGE_LABELS[stage]}: {count}
                   </span></Tooltip>
@@ -190,12 +216,12 @@ export default function QuarterPlanView() {
               <div className="grid grid-cols-2 gap-3">
                 <KPICard label="Go/No-Go Ratio" value={fmtPct(computed.goNoGoRatio)}
                   tooltip="Porcentaje de oportunidades evaluadas que se decidió perseguir. Fórmula: Go ÷ Evaluadas × 100." />
-                <KPICard label="Win Rate Target" value={fmtPct(activePlan.winRateTarget)}
+                <KPICard label="Win Rate Target" value={fmtPct(p.winRateTarget)}
                   tooltip="Tasa objetivo de conversión de propuesta a ganada. En AEC, un benchmark saludable es 20-30%." />
                 <KPICard label="Cobertura" value={fmtX(computed.cobertura)}
                   tooltip="Ratio entre pipeline bruto y objetivo de ganado. Benchmark: ≥ 3.0x para compensar el ciclo largo de ventas AEC."
                   trend={computed.cobertura >= 3 ? { value: 1, label: '≥ 3x objetivo' } : { value: -1, label: '< 3x riesgo' }} />
-                <KPICard label="Evaluadas" value={`${activePlan.opportunidadesGo}/${activePlan.opportunidadesEvaluadas}`}
+                <KPICard label="Evaluadas" value={`${p.opportunidadesGo}/${p.opportunidadesEvaluadas}`}
                   tooltip="Oportunidades que pasaron el filtro Go/No-Go sobre el total evaluadas." />
               </div>
             </Card>
@@ -208,13 +234,13 @@ export default function QuarterPlanView() {
                 <CheckCircle2 className="w-4 h-4" /> Resultados
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                <KPICard label="Won" value={fmtM(activePlan.wonUSD)}
+                <KPICard label="Won" value={fmtM(p.wonUSD)}
                   tooltip="Valor total de oportunidades ganadas este trimestre." />
-                <KPICard label="Lost" value={fmtM(activePlan.lostUSD)}
+                <KPICard label="Lost" value={fmtM(p.lostUSD)}
                   tooltip="Valor total de oportunidades perdidas este trimestre." />
-                <KPICard label="Fees Devengados" value={fmtM(activePlan.feesDevengadosUSD)}
+                <KPICard label="Fees Devengados" value={fmtM(p.feesDevengadosUSD)}
                   tooltip="Comisiones brutas devengadas por contrato, antes de retenciones. Refleja el valor contractual." />
-                <KPICard label="Fees Cobrados" value={fmtM(activePlan.feesCobradosUSD)}
+                <KPICard label="Fees Cobrados" value={fmtM(p.feesCobradosUSD)}
                   tooltip="Comisiones efectivamente cobradas, netas de retención en origen. Es el cash real recibido." />
               </div>
             </Card>
@@ -224,7 +250,7 @@ export default function QuarterPlanView() {
                 <DollarSign className="w-4 h-4" /> Economics
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                <KPICard label="Bid Cost" value={`$${activePlan.bidCostUSD.toLocaleString()}`}
+                <KPICard label="Bid Cost" value={`$${p.bidCostUSD.toLocaleString()}`}
                   tooltip="Costo total de preparar propuestas este trimestre (viajes, materiales, horas-hombre dedicadas)." />
                 <KPICard label="Tasa Efectiva Fees" value={fmtPct(computed.tasaEfectivaFees)}
                   tooltip="Comisión bruta como porcentaje del valor ganado. Fórmula: Fees Devengados ÷ Won × 100." />
@@ -243,13 +269,13 @@ export default function QuarterPlanView() {
                 <Users className="w-4 h-4" /> Actividad
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                <KPICard label="Contactos Nuevos" value={String(activePlan.targetNewContacts)}
+                <KPICard label="Contactos Nuevos" value={String(p.targetNewContacts)}
                   tooltip="Meta de nuevos contactos a generar este trimestre. Los contactos alimentan el pipeline futuro." />
-                <KPICard label="Int./Semana" value={String(activePlan.targetInteractionsPerWeek)}
+                <KPICard label="Int./Semana" value={String(p.targetInteractionsPerWeek)}
                   tooltip="Meta de interacciones semanales (emails, llamadas, reuniones). Indicador líder de generación de pipeline." />
-                <KPICard label="Reuniones/Semana" value={String(activePlan.targetMeetingsPerWeek)}
+                <KPICard label="Reuniones/Semana" value={String(p.targetMeetingsPerWeek)}
                   tooltip="Meta de reuniones presenciales o virtuales por semana con prospects y clientes." />
-                <KPICard label="Reuniones Decision-Makers" value={String(activePlan.reunionesDecisionMakers)}
+                <KPICard label="Reuniones Decision-Makers" value={String(p.reunionesDecisionMakers)}
                   tooltip="Reuniones realizadas directamente con tomadores de decisión (C-level, directores). Alta correlación con win rate." />
               </div>
             </Card>
@@ -259,25 +285,25 @@ export default function QuarterPlanView() {
                 <TrendingUp className="w-4 h-4" /> Pipeline Health
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                <KPICard label="Pipeline Nuevo" value={fmtM(activePlan.pipelineNuevoUSD)}
+                <KPICard label="Pipeline Nuevo" value={fmtM(p.pipelineNuevoUSD)}
                   tooltip="Valor de nuevas oportunidades ingresadas al pipeline este trimestre." />
-                <KPICard label="Pipeline Salido" value={fmtM(activePlan.pipelineSalidoUSD)}
+                <KPICard label="Pipeline Salido" value={fmtM(p.pipelineSalidoUSD)}
                   tooltip="Valor de oportunidades que salieron del pipeline (ganadas + perdidas + abandonadas)." />
                 <KPICard label="Health Score" value={fmtX(computed.pipelineHealth)}
                   tooltip="Ratio nuevo vs salido. > 1.0 = pipeline creciendo. < 1.0 = pipeline encogiéndose."
                   trend={computed.pipelineHealth >= 1 ? { value: 1, label: 'Creciendo' } : { value: -1, label: 'Encogiéndose' }} />
-                <KPICard label="Velocidad" value={`${activePlan.velocidadPipelineMeses} meses`}
+                <KPICard label="Velocidad" value={`${p.velocidadPipelineMeses} meses`}
                   tooltip="Tiempo promedio desde identificación hasta resolución (ganada o perdida). Velocidad del ciclo de ventas." />
               </div>
             </Card>
           </div>
 
           {/* Top 3 Opportunities */}
-          {activePlan.top3Oportunidades.length > 0 && (
+          {p.top3Oportunidades.length > 0 && (
             <Card className="space-y-3">
               <h3 className="text-xs font-semibold text-muted uppercase tracking-wider">Top 3 Oportunidades</h3>
               <div className="space-y-2">
-                {activePlan.top3Oportunidades.map((opp, i) => (
+                {p.top3Oportunidades.map((opp, i) => (
                   <div key={i} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
                     <div>
                       <span className="font-medium">{i + 1}. {opp.name}</span>
@@ -294,13 +320,13 @@ export default function QuarterPlanView() {
           )}
 
           {/* Risks */}
-          {activePlan.riesgos.length > 0 && (
+          {p.riesgos.length > 0 && (
             <Card className="space-y-2">
               <h3 className="text-xs font-semibold text-muted uppercase tracking-wider flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4" /> Riesgos
               </h3>
               <ul className="space-y-1 text-sm">
-                {activePlan.riesgos.map((r, i) => (
+                {p.riesgos.map((r, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className="text-red mt-0.5">•</span> {r}
                   </li>
