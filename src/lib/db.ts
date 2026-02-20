@@ -69,6 +69,8 @@ export async function seedIfEmpty(): Promise<void> {
   } = await import('./constants')
   const { DEFAULT_INTENSITY_CONFIG } = await import('./intensity-benchmarks')
   const { createSeedOpportunities } = await import('./seed-opportunities')
+  const { createSeedContacts, createSeedInteractions } = await import('./seed-contacts')
+  const { createSeedExpenses } = await import('./seed-expenses')
 
   await db.transaction(
     'rw',
@@ -79,6 +81,8 @@ export async function seedIfEmpty(): Promise<void> {
       db.withholdingProfiles,
       db.intensityConfig,
       db.opportunities,
+      db.contacts,
+      db.expenses,
       db.settings,
     ],
     async () => {
@@ -88,6 +92,18 @@ export async function seedIfEmpty(): Promise<void> {
       await db.withholdingProfiles.bulkAdd(DEFAULT_WITHHOLDING_PROFILES)
       await db.intensityConfig.add(DEFAULT_INTENSITY_CONFIG)
       await db.opportunities.bulkAdd(createSeedOpportunities())
+
+      // Seed contacts with interactions
+      const contacts = createSeedContacts()
+      const interactionPairs = createSeedInteractions(contacts)
+      for (const { contactId, interaction } of interactionPairs) {
+        const contact = contacts.find((c) => c.id === contactId)
+        if (contact) contact.interactions.push(interaction)
+      }
+      await db.contacts.bulkAdd(contacts)
+
+      await db.expenses.bulkAdd(createSeedExpenses())
+
       await db.settings.add({
         key: 'app',
         value: JSON.stringify({

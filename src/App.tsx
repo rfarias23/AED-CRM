@@ -7,7 +7,10 @@ import Opportunities from './routes/Opportunities'
 import OpportunityForm from './routes/Opportunities/OpportunityForm'
 import OpportunityDetail from './routes/Opportunities/OpportunityDetail'
 import Contacts from './routes/Contacts'
+import ContactForm from './routes/Contacts/ContactForm'
+import ContactDetail from './routes/Contacts/ContactDetail'
 import Expenses from './routes/Expenses'
+import ExpenseForm from './routes/Expenses/ExpenseForm'
 import CommercialPlan from './routes/CommercialPlan'
 import Reports from './routes/Reports'
 import Settings from './routes/Settings'
@@ -39,7 +42,12 @@ export default function App() {
           <Route path="opportunities/:id" element={<OpportunityDetail />} />
           <Route path="opportunities/:id/edit" element={<OpportunityForm />} />
           <Route path="contacts" element={<Contacts />} />
+          <Route path="contacts/new" element={<ContactForm />} />
+          <Route path="contacts/:id" element={<ContactDetail />} />
+          <Route path="contacts/:id/edit" element={<ContactForm />} />
           <Route path="expenses" element={<Expenses />} />
+          <Route path="expenses/new" element={<ExpenseForm />} />
+          <Route path="expenses/:id/edit" element={<ExpenseForm />} />
           <Route path="plan" element={<CommercialPlan />} />
           <Route path="reports" element={<Reports />} />
           <Route path="settings" element={<Settings />} />

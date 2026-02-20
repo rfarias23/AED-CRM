@@ -14,6 +14,50 @@ import { formatDate, formatPercent } from '@/lib/formatters'
 import { Pencil, Trash2, ArrowLeft, GitBranch } from 'lucide-react'
 import type { OpportunityStage } from '@/lib/types'
 
+/** Sub-component: linked expenses tab */
+function ExpenseTab({ opportunityId }: { opportunityId: string }) {
+  const expenses = useLiveQuery(
+    () => db.expenses.where('opportunityId').equals(opportunityId).toArray(),
+    [opportunityId],
+  )
+
+  if (!expenses) return <p className="text-muted text-sm">Cargando...</p>
+
+  const total = expenses.reduce((sum, e) => sum + e.amountUSD, 0)
+
+  return (
+    <Card>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-medium text-muted uppercase tracking-wider">Gastos Vinculados</h3>
+        {expenses.length > 0 && (
+          <span className="font-mono text-sm font-semibold">
+            Total: <MoneyDisplayInline amount={total} />
+          </span>
+        )}
+      </div>
+      {expenses.length === 0 ? (
+        <p className="text-sm text-muted">Sin gastos vinculados a esta oportunidad.</p>
+      ) : (
+        <div className="space-y-2">
+          {expenses.map((e) => (
+            <div key={e.id} className="flex items-center justify-between text-sm py-1.5 border-b border-border last:border-0">
+              <div>
+                <span className="font-medium">{e.description}</span>
+                <span className="text-muted ml-2">{e.vendor}</span>
+              </div>
+              <span className="font-mono"><MoneyDisplayInline amount={e.amountUSD} /></span>
+            </div>
+          ))}
+        </div>
+      )}
+    </Card>
+  )
+}
+
+function MoneyDisplayInline({ amount }: { amount: number }) {
+  return <span className="font-mono">${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+}
+
 const STAGE_ORDER: OpportunityStage[] = [
   'identification', 'qualification', 'proposal', 'negotiation', 'won',
 ]
@@ -193,10 +237,7 @@ export default function OpportunityDetail() {
       )}
 
       {activeTab === 'expenses' && (
-        <Card>
-          <h3 className="text-sm font-medium text-muted uppercase tracking-wider mb-3">Gastos Vinculados</h3>
-          <p className="text-sm text-muted">Los gastos vinculados se mostrarán aquí en Sprint 3.</p>
-        </Card>
+        <ExpenseTab opportunityId={opp.id} />
       )}
 
       {/* Stage Gate Modal */}
