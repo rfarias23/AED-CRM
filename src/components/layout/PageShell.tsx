@@ -10,12 +10,12 @@ export default function PageShell() {
     <div className="min-h-screen bg-paper">
       <Sidebar />
       <div
-        className={`transition-all ${
-          collapsed ? 'ml-16' : 'ml-[260px]'
+        className={`transition-all ml-0 ${
+          collapsed ? 'lg:ml-16' : 'lg:ml-[260px]'
         }`}
       >
         <Header />
-        <main className="p-6">
+        <main className="p-4 lg:p-6">
           <Outlet />
         </main>
       </div>

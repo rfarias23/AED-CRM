@@ -5,6 +5,7 @@ import { db } from '@/lib/db'
 interface SettingsState {
   displayCurrency: Currency
   sidebarCollapsed: boolean
+  mobileSidebarOpen: boolean
   activeQuarterId?: string
   profileName: string
   profileCompany: string
@@ -14,6 +15,8 @@ interface SettingsState {
   load: () => Promise<void>
   setDisplayCurrency: (currency: Currency) => void
   toggleSidebar: () => void
+  openMobileSidebar: () => void
+  closeMobileSidebar: () => void
   setActiveQuarter: (quarterId: string | undefined) => void
   updateProfile: (name: string, company: string, email: string) => void
 }
@@ -21,6 +24,7 @@ interface SettingsState {
 export const useSettingsStore = create<SettingsState>((set, get) => ({
   displayCurrency: 'USD',
   sidebarCollapsed: false,
+  mobileSidebarOpen: false,
   activeQuarterId: undefined,
   profileName: '',
   profileCompany: '',
@@ -54,6 +58,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed }))
     persistSettings(get())
   },
+
+  openMobileSidebar: () => set({ mobileSidebarOpen: true }),
+  closeMobileSidebar: () => set({ mobileSidebarOpen: false }),
 
   setActiveQuarter: (quarterId) => {
     set({ activeQuarterId: quarterId })

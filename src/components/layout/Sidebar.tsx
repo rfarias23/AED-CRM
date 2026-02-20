@@ -10,6 +10,7 @@ import {
   Settings,
   PanelLeftClose,
   PanelLeft,
+  X,
 } from 'lucide-react'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
@@ -26,61 +27,91 @@ const NAV_ITEMS = [
 
 export default function Sidebar() {
   const collapsed = useSettingsStore((s) => s.sidebarCollapsed)
+  const mobileOpen = useSettingsStore((s) => s.mobileSidebarOpen)
   const toggle = useSettingsStore((s) => s.toggleSidebar)
+  const closeMobile = useSettingsStore((s) => s.closeMobileSidebar)
 
   return (
-    <aside
-      className={`fixed top-0 left-0 h-screen bg-ink text-white flex flex-col transition-all z-30 ${
-        collapsed ? 'w-16' : 'w-[260px]'
-      }`}
-    >
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10">
-        {!collapsed && (
-          <span className="font-heading text-lg tracking-tight">AEC Pipeline</span>
-        )}
-        <button
-          onClick={toggle}
-          className="ml-auto p-1.5 rounded hover:bg-white/10 transition-colors"
-          aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
-        >
-          {collapsed ? (
-            <PanelLeft className="w-5 h-5" />
-          ) : (
-            <PanelLeftClose className="w-5 h-5" />
-          )}
-        </button>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 py-4 overflow-y-auto">
-        {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={to === '/'}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-colors ${
-                isActive
-                  ? 'bg-accent text-white'
-                  : 'text-white/70 hover:text-white hover:bg-white/5'
-              } ${collapsed ? 'justify-center' : ''}`
-            }
-          >
-            <Icon className="w-5 h-5 shrink-0" />
-            {!collapsed && (
-              <span className="text-sm font-medium">{label}</span>
-            )}
-          </NavLink>
-        ))}
-      </nav>
-
-      {/* Footer */}
-      {!collapsed && (
-        <div className="px-4 py-3 border-t border-white/10 text-xs text-white/40">
-          Command Center v1.0
-        </div>
+    <>
+      {/* Mobile overlay backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          onClick={closeMobile}
+        />
       )}
-    </aside>
+
+      {/* Sidebar — desktop: fixed, mobile: slide-in overlay */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-screen bg-ink text-white flex flex-col z-50
+          transition-all duration-200
+          /* Desktop: always visible */
+          max-lg:translate-x-[-100%]
+          lg:translate-x-0
+          ${collapsed ? 'lg:w-16' : 'lg:w-[260px]'}
+          /* Mobile: slide in when open */
+          ${mobileOpen ? 'max-lg:translate-x-0 max-lg:w-[260px]' : ''}
+        `}
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10">
+          {(!collapsed || mobileOpen) && (
+            <span className="font-heading text-lg tracking-tight">AEC Pipeline</span>
+          )}
+          {/* Desktop toggle */}
+          <button
+            onClick={toggle}
+            className="ml-auto p-1.5 rounded hover:bg-white/10 transition-colors hidden lg:block"
+            aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+          >
+            {collapsed ? (
+              <PanelLeft className="w-5 h-5" />
+            ) : (
+              <PanelLeftClose className="w-5 h-5" />
+            )}
+          </button>
+          {/* Mobile close */}
+          <button
+            onClick={closeMobile}
+            className="ml-auto p-1.5 rounded hover:bg-white/10 transition-colors lg:hidden"
+            aria-label="Cerrar menú"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 py-4 overflow-y-auto">
+          {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/'}
+              onClick={closeMobile}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-colors ${
+                  isActive
+                    ? 'bg-accent text-white'
+                    : 'text-white/70 hover:text-white hover:bg-white/5'
+                } ${collapsed && !mobileOpen ? 'justify-center' : ''}`
+              }
+            >
+              <Icon className="w-5 h-5 shrink-0" />
+              {(!collapsed || mobileOpen) && (
+                <span className="text-sm font-medium">{label}</span>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Footer */}
+        {(!collapsed || mobileOpen) && (
+          <div className="px-4 py-3 border-t border-white/10 text-xs text-white/40">
+            Command Center v1.0
+          </div>
+        )}
+      </aside>
+    </>
   )
 }
